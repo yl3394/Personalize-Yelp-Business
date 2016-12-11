@@ -260,10 +260,15 @@ checkin_df['total_checkins'] = checkin_df['checkin_info'].apply(lambda x: sum(x.
 checkin_df
 
 
-# In[269]:
+# In[ ]:
+
+
+
+
+# In[1]:
 
 categories = ['French']
-# categories = top_categories
+categories = top_categories
 
 
 # In[270]:
