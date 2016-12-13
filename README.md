@@ -8,11 +8,8 @@
   
 + Project summary:
 
- + Branches:
-      1. image_processing:
-        Code for image captioning 
-      2. chris_analysis:
-        Code for analysis and prediction models 
-       3. text_mining:
-        Code for text mining (NLP)
++ Branches:
+    	+ image_processing: Code for image captioning 
+      	+ chris_analysis: Code for analysis and prediction models 
+       	+ text_mining: Code for text mining (NLP)
         
