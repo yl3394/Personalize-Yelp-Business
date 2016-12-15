@@ -8,25 +8,31 @@ get_ipython().magic(u'pylab inline')
 
 # In[2]:
 
-import easel
+# import easel
 
 
-# In[3]:
+# In[2]:
 
 import pandas as pd
 
 
-# In[109]:
+# In[3]:
 
 from scipy.cluster.hierarchy import *
 
 
-# In[111]:
+# In[4]:
 
 import seaborn as sns
 
 
-# In[7]:
+# In[55]:
+
+sns.set_context("talk")
+sns.set(font_scale=1.5)
+
+
+# In[6]:
 
 business_file = '/Users/chalpert/Documents/Columbia/Big_Data/Project/yelp_dataset_challenge_academic_dataset/yelp_academic_dataset_business.json'
 business_category_file = '/Users/chalpert/Documents/Columbia/Big_Data/Project/yelp_dataset_challenge_academic_dataset/business_category.csv'
@@ -35,20 +41,20 @@ business_df = pd.read_json(business_file, orient='records', lines=True)
 business_category_df = pd.read_csv(business_category_file)
 
 
-# In[20]:
+# In[7]:
 
-restaurant_ids = business_category[lambda x: x['categories_value'] == 'Restaurants']['business_id']
+restaurant_ids = business_category_df[lambda x: x['categories_value'] == 'Restaurants']['business_id']
 restaurant_ids = restaurant_ids.reset_index(drop=True)
 
 
-# In[23]:
+# In[8]:
 
 restaurants_df = business_df[lambda x: x['business_id'].isin(restaurant_ids.values)]
 
 
 # # By category
 
-# In[45]:
+# In[9]:
 
 business_category_df.head()
 
@@ -56,7 +62,7 @@ business_category_df.head()
 # ### Most restaurants have multiple categories
 # - Count of categories per restaurant
 
-# In[47]:
+# In[10]:
 
 (restaurants_df
  .merge(business_category_df, on='business_id')
@@ -69,7 +75,7 @@ business_category_df.head()
 
 # # Restaurant overlap
 
-# In[85]:
+# In[11]:
 
 category_count = (restaurants_df
  .merge(business_category_df, on='business_id')
@@ -80,29 +86,29 @@ category_count = (restaurants_df
 )
 
 
-# In[104]:
+# In[12]:
 
 top_categories = category_count[category_count > 100].index
 
 
-# In[105]:
+# In[13]:
 
 len(top_categories)
 
 
-# In[69]:
+# In[14]:
 
 restaurant_categories = restaurants_df.merge(business_category_df, on='business_id')[['business_id', 'categories_value']]
 restaurant_categories['ones'] = 1
 restaurant_overlap = pd.pivot_table(restaurant_categories, index='categories_value', columns='business_id', aggfunc=max, values='ones')
 
 
-# In[71]:
+# In[15]:
 
 restaurant_overlap = restaurant_overlap.fillna(0)
 
 
-# In[103]:
+# In[16]:
 
 def calc_overlap(df):
     jaccard_matrix = np.zeros((len(df),len(df)))
@@ -118,12 +124,12 @@ def calc_overlap(df):
             
 
 
-# In[106]:
+# In[17]:
 
 overlap =  calc_overlap(restaurant_overlap.reindex(top_categories))
 
 
-# In[112]:
+# In[18]:
 
 ctab = pd.DataFrame(overlap, index=restaurant_overlap.reindex(top_categories).index, columns=restaurant_overlap.reindex(top_categories).index)
 #ctab = pd.DataFrame(np.corrcoef(goals_by_website), index=goals_by_website.index, columns=goals_by_website.index)
@@ -132,7 +138,7 @@ d = dendrogram(z, labels=ctab.index,leaf_rotation=90)
 sns.despine()
 
 
-# In[259]:
+# In[56]:
 
 order = ctab.index[d['leaves']]
 ctab_o = ctab.reindex_axis(order, axis=0).reindex_axis(order, axis=1)
@@ -148,10 +154,38 @@ ax.set_ylabel('Category')
 sns.despine()
 
 
+# In[84]:
+
+ctab_o.sum(axis=1).sort_values()
+
+
+# In[97]:
+
+ctab_o.ix[['Bagels', 'Indian', 'Japanese'], 'Sushi Bars']
+
+
+# In[94]:
+
+order = ctab.index[d['leaves']]
+ctab_o = ctab.reindex_axis(order, axis=0).reindex_axis(order, axis=1)
+
+mask = np.zeros_like(ctab_o)
+#mask[np.triu_indices_from(mask)] = True
+sns.set(font_scale=1.5)
+with sns.axes_style("white"):
+    f, ax = plt.subplots(figsize=(13, 7))
+    ax = sns.heatmap(ctab_o.ix[['Bagels', 'Indian', 'Japanese'], :], annot=False, linewidths=.5, square=False, cbar=False, fmt='.2f')
+#     f.suptitle('% of restaurants in row that also have category in column')
+ax.set_xlabel('Category')
+ax.set_ylabel('Category')
+sns.despine()
+plt.tight_layout()
+
+
 # ## Restaurant count
 # - Top 10
 
-# In[257]:
+# In[20]:
 
 (restaurants_df
  .merge(business_category_df, on='business_id')
@@ -166,7 +200,12 @@ sns.despine()
 
 # ## Avg rating
 
-# In[141]:
+# In[58]:
+
+sns.set_style('white')
+
+
+# In[59]:
 
 (restaurants_df
  .merge(business_category_df, on='business_id')
@@ -176,10 +215,11 @@ sns.despine()
  .mean()
  .sort_values(ascending=True)
  .iloc[-11:]
-).plot(kind='barh')
+).plot(kind='barh', xlim=[0,5])
+sns.despine()
 
 
-# In[139]:
+# In[60]:
 
 (restaurants_df
  .merge(business_category_df, on='business_id')
@@ -189,7 +229,8 @@ sns.despine()
  .mean()
  .sort_values(ascending=True)
  .iloc[:10]
-).plot(kind='barh')
+).plot(kind='barh',  xlim=[0,5])
+sns.despine()
 
 
 # In[140]:
@@ -243,19 +284,19 @@ rating_count = (restaurants_df
 
 # # Need to control for restaurant age
 
-# In[171]:
+# In[29]:
 
 checkin_file = '/Users/chalpert/Documents/Columbia/Big_Data/Project/yelp_dataset_challenge_academic_dataset/Restaurants/checkin.json'
 
 checkin_df = pd.read_json(checkin_file, orient='records')
 
 
-# In[183]:
+# In[30]:
 
 checkin_df['total_checkins'] = checkin_df['checkin_info'].apply(lambda x: sum(x.values()))
 
 
-# In[184]:
+# In[31]:
 
 checkin_df
 
@@ -265,13 +306,13 @@ checkin_df
 
 
 
-# In[1]:
+# In[32]:
 
 categories = ['French']
 categories = top_categories
 
 
-# In[270]:
+# In[33]:
 
 checkin_count = (restaurants_df
  .merge(business_category_df, on='business_id')
@@ -283,7 +324,7 @@ checkin_count = (restaurants_df
  .sort_values(ascending=True))
 
 
-# In[271]:
+# In[34]:
 
 avg_rating = (restaurants_df
  .merge(business_category_df, on='business_id')
@@ -295,24 +336,30 @@ avg_rating = (restaurants_df
 )
 
 
-# In[272]:
+# In[35]:
 
 checkin_rating = pd.concat([(checkin_count), avg_rating], axis=1)
 
 
-# In[273]:
+# In[36]:
 
 checkin_rating.columns = ['avg_checkins', 'avg_rating']
 
 
-# In[274]:
+# In[65]:
 
-checkin_rating.groupby('avg_rating')['avg_checkins'].mean().plot()
+sns.set(font_scale=2)
+sns.set_style('white')
+checkin_rating.groupby('avg_rating')['avg_checkins'].mean().plot(xlim=[0, 5.5])
+sns.despine()
 
 
-# In[275]:
+# In[66]:
 
-checkin_rating.plot(x='avg_checkins', y='avg_rating', kind='scatter')
+sns.set(font_scale=2)
+sns.set_style('white')
+checkin_rating.plot(x='avg_rating', y='avg_checkins', kind='scatter', ylim=[0, 60000], xlim=[0, 5.5])
+sns.despine()
 
 
 # ## Rating overlap
