@@ -1,6 +1,7 @@
 import sys
 import pandas as pd
 
+import yelp_lib
 # spark = SparkSession.builder.appName("yelp").getOrCreate()
 
 # business = spark.read.json('/home/hadoop/yelp_dataset_challenge_academic_dataset/business_cleaned.json')
@@ -27,10 +28,13 @@ def review_count_by_date(df):
     df.columns = ['date','review_count']
     return df
 
-def get_review_count_by_date(spark, business_id):
+def get_review_count_by_date(business_id):
+    spark = yelp_lib.spark
+    review = yelp_lib._get_parq('review')
+    review.registerTempTable("review")
     df = spark.sql("""select * from review where business_id = '{business_id}'""".format(business_id=business_id)).toPandas()
     review_count = review_count_by_date(df)
-    return review_count.to_json()
+    return review_count.to_csv(None, sep='\t', header=True, index=False)
 
 def review_avg_by_date(df):
     df['date'] = pd.to_datetime(df['date'])
@@ -51,6 +55,24 @@ def review_avg_by_date(df):
     review_count = review_count.ix['2015-01-01':].reset_index()
     review_count.columns = ['date','avg_rating']
     return review_count
+
+
+def get_review_avg_by_date(business_id):
+    spark = yelp_lib.spark
+    review = yelp_lib._get_parq('review')
+    review.registerTempTable("review")
+    df = spark.sql("""select * from review where business_id = '{business_id}'""".format(business_id=business_id)).toPandas()
+    review_count = review_avg_by_date(df)
+    return review_count.to_csv(None, sep='\t', header=True, index=False)
+
+
+def get_business_info(business_id):
+    spark = yelp_lib.spark
+    business = yelp_lib._get_parq('business')
+    business.registerTempTable("business")
+    df = spark.sql("""select * from business where business_id = '{business_id}'""".format(business_id=business_id)).toPandas()
+    return df
+
 
 def main(business_id):
 	df = spark.sql("""select * from review where business_id = '{business_id}'""".format(business_id=business_id)).toPandas()

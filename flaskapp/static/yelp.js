@@ -37,6 +37,7 @@ function createTable(elemId, response) {
     }
 
     var tbl = document.createElement('table');
+    tbl.setAttribute("id", "bizOutputTable");
     tbl.style.width  = '100px';
     tbl.style.border = '1px solid black';
 
