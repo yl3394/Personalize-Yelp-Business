@@ -1,11 +1,10 @@
-import pandas
-from pyspark import SparkConf, SparkContext
 from pyspark.sql import SparkSession
 
 spark = SparkSession.builder.appName("yelp").getOrCreate()
-
 parqs = {}
-def _get_parq(name):
+
+
+def get_parq(name):
     """
     Caches parquet file on the first lookup. Returns cached object on subsequent lookups.
     :param name: parquet file to load, e.g. 'business', 'review'
@@ -15,6 +14,7 @@ def _get_parq(name):
         parqs[name] = spark.read.load('/home/hadoop/yelp_data/yelp_{}.parquet'.format(name))
     return parqs[name]
 
+
 def get_business_names(name):
     """
     Prints all business names contanining 'name'.
@@ -22,7 +22,7 @@ def get_business_names(name):
     if not name:
         return ""
 
-    business_parq = _get_parq('business')
+    business_parq = get_parq('business')
 
     sel = business_parq.select(
         'name', 'business_id', 'city', 'state', 'stars', 'review_count', 'categories'
