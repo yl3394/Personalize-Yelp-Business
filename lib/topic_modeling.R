@@ -124,9 +124,5 @@ saveRDS(dat.topicmodel.bigram, "output/topicmodel_bigram.rds")
 # transform to JSON file 
 dat.topicmodel.bigram.json <- toJSON(dat.topicmodel.bigram)
 # save to local path in JSON form
-write(dat.topicmodel.bigram.json, "output/bigram_topics.json")
-
-# Aggregate to Business ID Level ############################################################
-
-
+write(dat.topicmodel.bigram.json, "output/topicmodel_bigram.json")
 
