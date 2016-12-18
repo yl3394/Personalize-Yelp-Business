@@ -101,20 +101,9 @@ model_LDA_5topics_bigram <-LDA(mx.dtm.2gram, 8, method="Gibbs",
                                      iter = iter, thin=thin))
 print(proc.time() - ptm)
 
-# topic label for each review text line
-dat.topics.bigram <- data.frame(dat.colname, 
-                                topic =  as.data.frame(topics(model_LDA_5topics_bigram))) %>%
-  rename(topic = topics.model_LDA_5topics_bigram.)
-
-# save to local 
-saveRDS(dat.topics.bigram, "output/bigram_topics.rds")
-# transform to JSON file 
-dat.topics.bigram.json <- toJSON(dat.topics.bigram)
-# save to local path in JSON form
-write(dat.topics.bigram.json, "output/bigram_topics.json")
-
-# top terms for each topic 
+# top terms for each topic --------------------------------------------------
 dat.terms.bigram <- as.data.frame(terms(model_LDA_5topics_bigram, 10))
+
 # save to local 
 saveRDS(dat.terms.bigram, "output/bigram_terms.rds")
 # transform to JSON file 
@@ -122,8 +111,22 @@ dat.terms.bigram.json <- toJSON(dat.terms.bigram)
 # save to local path in JSON form
 write(dat.terms.bigram.json, "output/bigram_terms.json")
 
-# probability for each topic 
-topicProbabilities <- as.data.frame(model_LDA_5topics_bigram@gamma)
+# probability for each topic --------------------------------------------------
+dat.topicmodel.bigram <- cbind(dat.colname, as.data.frame(topics(model_LDA_5topics_bigram)),
+                              as.data.frame(model_LDA_5topics_bigram@gamma)) 
+
+colnames(dat.topicmodel.bigram)[c(4:12)] <- c("topic", "topic_1_prob", "topic_2_prob", 
+                                        "topic3_prob", "topic_4_prob", "topic_5_prob", 
+                                        "topic_6_prob", "topic_7_prob", "topic_8_prob")
+
+# save to local 
+saveRDS(dat.topicmodel.bigram, "output/topicmodel_bigram.rds")
+# transform to JSON file 
+dat.topicmodel.bigram.json <- toJSON(dat.topicmodel.bigram)
+# save to local path in JSON form
+write(dat.topicmodel.bigram.json, "output/bigram_topics.json")
 
 # Aggregate to Business ID Level ############################################################
+
+
 
