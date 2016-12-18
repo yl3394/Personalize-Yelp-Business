@@ -1,7 +1,6 @@
 from flask import Flask
 from flask import render_template
 
-from spark_scripts.yelp_lib import spark
 import spark_scripts.analysis as analysis
 import spark_scripts.yelp_lib as lib
 
@@ -26,9 +25,11 @@ def build_chart(business_id):
     business_name = business_info.name.values[0]
     return render_template('yelp_restaurant.html', business_id=business_id, business_name=business_name)
 
+
 @app.route('/analysis/review_count/<business_id>')
 def analysis_review_count(business_id):
     return analysis.get_review_count_by_date(business_id)
+
 
 @app.route('/analysis/review_avg/<business_id>')
 def analysis_review_avg(business_id):
@@ -36,4 +37,4 @@ def analysis_review_avg(business_id):
 
 
 if __name__ == '__main__':
-  app.run(debug=True)
+    app.run()
