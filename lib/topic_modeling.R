@@ -21,7 +21,7 @@ library(topicmodels)
 # load DTM created environment 
 load("/Users/yanjin1993/GitHub/Personalize-Yelp-Business/tm/environment/100_enviornment_dtm_clean.RData")
 # set working directory
-setwd("/Users/yanjin1993/GitHub/Personalize-Yelp-Business/tm/")
+setwd("/Users/yanjin1993/GitHub/Personalize-Yelp-Business/")
 
 #Set parameters for Gibbs sampling
 burnin <- 4000
@@ -82,7 +82,15 @@ mx.dtm.2gram <- as.matrix(datclean.dtm.gram2) # no need to remove business_id re
 # remove rowSums = 0 rows 
 mx.dtm.2gram <- mx.dtm.2gram[rowSums(mx.dtm.2gram)!=0, ] 
 
-
+# get row number for rowsum == 0 rows
+temp <- as.matrix(datclean.dtm.gram2)
+lst.rowsum.zero <- c(which(rowSums(temp)==0))
+# load data with business id and review id 
+file_path <- "/Users/yanjin1993/Desktop/Restaurants/reviews.json"
+dat.review <- fromJSON(txt=file_path)
+# get metd info 
+dat.colname <- dat.review[-lst.rowsum.zero, c("business_id", "review_id", "stars")]
+rm(temp)
 
 # LDA Topic Modeling #######################################################################
 # Run LDA using Gibbs sampling
@@ -91,16 +99,31 @@ model_LDA_5topics_bigram <-LDA(mx.dtm.2gram, 8, method="Gibbs",
                         control=list(nstart=nstart,seed = seed, 
                                      best=best, burnin = burnin, 
                                      iter = iter, thin=thin))
-
 print(proc.time() - ptm)
 
 # topic label for each review text line
-dat.topics.bigram <- as.data.frame(topics(model_LDA_5topics_bigram))
+dat.topics.bigram <- data.frame(dat.colname, 
+                                topic =  as.data.frame(topics(model_LDA_5topics_bigram))) %>%
+  rename(topic = topics.model_LDA_5topics_bigram.)
+
+# save to local 
+saveRDS(dat.topics.bigram, "output/bigram_topics.rds")
+# transform to JSON file 
+dat.topics.bigram.json <- toJSON(dat.topics.bigram)
+# save to local path in JSON form
+write(dat.topics.bigram.json, "output/bigram_topics.json")
 
 # top terms for each topic 
 dat.terms.bigram <- as.data.frame(terms(model_LDA_5topics_bigram, 10))
+# save to local 
+saveRDS(dat.terms.bigram, "output/bigram_terms.rds")
+# transform to JSON file 
+dat.terms.bigram.json <- toJSON(dat.terms.bigram)
+# save to local path in JSON form
+write(dat.terms.bigram.json, "output/bigram_terms.json")
 
 # probability for each topic 
 topicProbabilities <- as.data.frame(model_LDA_5topics_bigram@gamma)
 
+# Aggregate to Business ID Level ############################################################
 
