@@ -1,0 +1,40 @@
+
+1. Do we need to CV parameters?
+2. Use 2-gram instead of 1-gram as topics' top terms  yes 
+3. How do we use this in our project? done 
+4. How do we aggregate scores for each business_id? 
+
+
+
+Search terms -> recommendation (data product)
+	+ business ID: top terms + topics 
+	+ food name: top three business id -> business name 
+Topic modeling -> What is the label for each business ID
+
+
+
+
+TEXT MINING
+Challenges:
+	+ 1630712 lines of reviews difficult to do text mining process on: 
+		- remove punctuations 
+		- remove stop words 
+		- stem words 
+		- remove whitepsaces 
+
+Solutions:	
+	+ make data into partitions, and process text mining on each parition at the same time (164 partitions)
+
+Limitations:
+	+ when removing sparse terms (especially on bigram terms), we lost some information 
+
+IMAGE CAPTIONING
+Challenges:
+	+ configuration and installation of NN2 
+
+we need to CV colSums to keep for
+
+should I remove good place, good service???
+
+group by business
+join with category 

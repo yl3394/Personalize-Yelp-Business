@@ -121,6 +121,11 @@ ptm <- proc.time()
 # stop the timer
 print(proc.time() - ptm)
 
+
+# combine two doc lists 
+doc_list_complete <- append(doc_list, doc_list_1) 
+doc_list_complete <- as.list(doc_list_complete) # make sure the structure is correct 
+
 # Note*: running time/processing time gets longer and longer since doc_list, 
 # dtm_list and dtmdf_list gets larger and larger 
 
@@ -151,6 +156,7 @@ dat.overall.businessid.freq <- datclean.dtm.overall %>%
   summarise(num = n()) %>%            
   arrange(desc(num)) %>%
   spread(word, num) 
+
 # change NA cell values into Os
 dat.overall.businessid.freq[is.na(dat.overall.businessid.freq)] <- 0  
 
@@ -165,9 +171,9 @@ dat.overall.businessid.freq.json <- toJSON(dat.overall.businessid.freq)
 dat.businessid.top.freq.json <- toJSON(dat.businessid.top.freq)
 # save to local path in JSON form
 write(dat.overall.businessid.freq.json, 
-      "/Users/yanjin1993/GitHub/Personalize-Yelp-Business/data/dat_overall_businessid_freq.json")
+      "/Users/yanjin1993/GitHub/Personalize-Yelp-Business/output/dat_overall_businessid_freq.json")
 write(dat.businessid.top.freq.json, 
-      "/Users/yanjin1993/GitHub/Personalize-Yelp-Business/data/dat_businessid_top_freq.json")
+      "/Users/yanjin1993/GitHub/Personalize-Yelp-Business/output/dat_businessid_top_freq.json")
 
 # save to local path in RDS form 
 saveRDS(dat.overall.businessid.freq, 
@@ -181,29 +187,152 @@ saveRDS(dat.businessid.top.freq,
 GetNgramDf <- function(doc, n, sparsity) {
   # DESCRITPION: Return n-gram dataframes 
   # RETURN VALUES: dataframe
-  return.list <- list()
-  
+  return_list <- list()
+  # set up timer
+  ptm <- proc.time()
+  # define tokenization function 
   NGramTokenizer <- function(x) 
     unlist(lapply(ngrams(words(x), n), paste, collapse = " "), use.names = FALSE)
   
   ngram.dtm <- DocumentTermMatrix(doc, control = list(tokenize = NGramTokenizer))
+  #status check
+  print("N-gram tokenization finished!") 
+
   ngram.dtm.nonsparse <- removeSparseTerms(ngram.dtm, 1.00 - sparsity)
-  ngram.dtm.df <- cbind(Date = dat.combine$Date, 
-                        Label = dat.combine$Label,
-                        text_body = dat.combine$text_body,
-                        as.data.frame(as.matrix(ngram.dtm.nonsparse)))
-  return.list[["dtm"]] <- ngram.dtm
-  return.list[["dtm.df"]] <- ngram.dtm.df
-  return(return.list)
+  #status check
+  print("Sparsity removed!")
+  
+  ngram.dtm.df <- cbind(as.data.frame(as.matrix(ngram.dtm.nonsparse)))
+  #status check
+  print("Transformed into dataframes!")
+  
+  # stop timer
+  print(proc.time() - ptm)
+  
+  return_list[["dtm"]] <- ngram.dtm
+  return_list[["dtm_dataframe"]] <- ngram.dtm.df
+  
+  return(return_list)
 }
 
+# i <- 1
+# gram2_dtm_list <- c()
+# dat.dtm.gram2 <- data.frame()
+# dat.dtm.gram2_1 <- data.frame()
+# dat.dtm.gram2_2 <- data.frame()
+# dat.dtm.gram2_3 <- data.frame()
+dat.dtm.gram2_4 <- data.frame()
+
+for (doc in doc_list_complete[1:164]) {
+  return.temp <- GetNgramDf(doc, 2, 0.02)
+  # gram2_dtm_list[[j]] <- return.temp$dtm
+  
+  dat.dtm.gram2_4 <- bind_rows(dat.dtm.gram2_4, return.temp$dtm_dataframe)
+  print(paste0("The ", i, "th N-gram file generated!"))
+  i <- i + 1
+}
+
+saveRDS(dat.dtm.gram2_0, 
+        "/Users/yanjin1993/GitHub/Personalize-Yelp-Business/output/dat.dtm.gram2_0.rds")
+saveRDS(dat.dtm.gram2_1, 
+        "/Users/yanjin1993/GitHub/Personalize-Yelp-Business/output/dat_dtm_gram2_1.rds")
+saveRDS(dat.dtm.gram2_2, 
+        "/Users/yanjin1993/GitHub/Personalize-Yelp-Business/output/dat_dtm_gram2_2.rds")
+saveRDS(dat.dtm.gram2_3, 
+        "/Users/yanjin1993/GitHub/Personalize-Yelp-Business/output/dat_dtm_gram2_3.rds")
+saveRDS(dat.dtm.gram2_4, 
+        "/Users/yanjin1993/GitHub/Personalize-Yelp-Business/output/dat_dtm_gram2_4.rds")
+
+# # load saved data 
+# dat.dtm.gram2_0 <- readRDS("/Users/yanjin1993/GitHub/Personalize-Yelp-Business/output/dat_dtm_gram2_0.rds")
+# dat.dtm.gram2_1 <- readRDS("/Users/yanjin1993/GitHub/Personalize-Yelp-Business/output/dat_dtm_gram2_1.rds")
+# dat.dtm.gram2_2 <- readRDS("/Users/yanjin1993/GitHub/Personalize-Yelp-Business/output/dat_dtm_gram2_2.rds")
+# dat.dtm.gram2_3 <- readRDS("/Users/yanjin1993/GitHub/Personalize-Yelp-Business/output/dat_dtm_gram2_3.rds")
+# dat.dtm.gram2_4 <- readRDS("/Users/yanjin1993/GitHub/Personalize-Yelp-Business/output/dat_dtm_gram2_4.rds")
+
+# combined segmented bigram together
+dat.dtm.gram2 <- bind_rows(dat.dtm.gram2_0, dat.dtm.gram2_1, 
+                  dat.dtm.gram2_2, dat.dtm.gram2_3, dat.dtm.gram2_4)
+saveRDS(dat.dtm.gram2, "/Users/yanjin1993/GitHub/Personalize-Yelp-Business/output/dat_dtm_gram2_overall.rds")
+
+# remove columns contain NAs
+# datclean.dtm.gram2 <- dat.dtm.gram2[,!apply(is.na(dat.dtm.gram2), 2, any)] # only 9 var lefted 
+
+# change NA cell values into Os
+dat.dtm.gram2[is.na(dat.dtm.gram2)] <- 0 
+# make a copy of original data 
+datclean.dtm.gram2 <- dat.dtm.gram2 
+
+# DTM terms frequency by business ID 
+dat.gram2.businessid.freq <- cbind(business_id = dat.review$business_id, 
+                                   datclean.dtm.gram2) %>%
+  gather(word, frequency, -c(business_id)) %>%
+  filter(frequency != 0) %>%
+  group_by(word, business_id) %>%    
+  summarise(num = n()) %>%            
+  arrange(desc(num)) %>%
+  spread(word, num) 
+
+# change NA cell values into Os
+dat.gram2.businessid.freq[is.na(dat.gram2.businessid.freq)] <- 0  
+
+# save to local
+saveRDS(dat.gram2.businessid.freq, 
+        "/Users/yanjin1993/GitHub/Personalize-Yelp-Business/output/gram2_businessid_freq.rds")
+
+# top frequency
+dat.businessid.top.freq.gram2 <- cbind(business_id = dat.review$business_id, 
+                                   datclean.dtm.gram2) %>%
+  gather(word, frequency, -c(business_id)) %>%
+  filter(frequency != 0) %>%
+  group_by(word, business_id) %>%    
+  summarise(num = n()) %>%            
+  arrange(desc(num)) %>%
+  arrange(desc(business_id)) %>%
+  group_by(business_id) %>%
+  top_n(n = 5) 
+
+# save to local 
+saveRDS(dat.businessid.top.freq.gram2, 
+        "/Users/yanjin1993/GitHub/Personalize-Yelp-Business/output/businessid_top_freq_gram2.rds")
+
+# transform to JSON file 
+dat.gram2.businessid.freq.json <- toJSON(dat.gram2.businessid.freq)
+dat.businessid.top.freq.gram2.json <- toJSON(dat.businessid.top.freq.gram2)
+# save to local path in JSON form
+write(dat.gram2.businessid.freq.json, 
+      "/Users/yanjin1993/GitHub/Personalize-Yelp-Business/output/gram2_businessid_freq.json")
+write(dat.businessid.top.freq.gram2.json, 
+      "/Users/yanjin1993/GitHub/Personalize-Yelp-Business/output/businessid_top_freq_gram2.json")
+
+# get every star by business_id
+dat.businessid.avgstar <- dat.review %>% 
+  select(business_id, stars) %>%
+  group_by(business_id) %>%
+  summarise(avg_stars = mean(stars), num_reviews = n())
+
+dat.gram2.recommendation <- left_join(dat.businessid.top.freq.gram2, 
+                                      dat.businessid.avgstar, by = "business_id")
+
+# save to local 
+saveRDS(dat.gram2.recommendation, 
+        "/Users/yanjin1993/GitHub/Personalize-Yelp-Business/output/gram2_recommendation.rds")
+# transform to JSON file 
+dat.gram2.recommendation.json <- toJSON(dat.gram2.recommendation)
+# save to local path in JSON form
+write(dat.gram2.recommendation.json, 
+      "/Users/yanjin1993/GitHub/Personalize-Yelp-Business/output/gram2_recommendation.json")
+
+
+# # top three words by business_id
+# dat.businessid.top.freq.gram2 <- dat.gram2.businessid.freq %>% 
+#   arrange(desc(business_id)) %>%
+#   group_by(business_id) %>%
+#   top_n(n = 3) 
 
 
 
-
-
-# dat.dtm.overall <- datclean.dtm.overall
-
-# combine two partitioned datasets 
-# datclean.dtm.overall <- bind_rows(dat.dtm.overall, dat.dtm.overall_1)
+# NEXT STEP:
+# 1. make a food list: ppl search by food -> resturant based on star and review 
+# 2. topic modeling 
 
