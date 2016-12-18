@@ -74,7 +74,9 @@ datclean.dtm.gram2 <- datclean.dtm.gram2[, colSums(datclean.dtm.gram2) >= 300] #
 # remove some common word columns 
 datclean.dtm.gram2 <- datclean.dtm.gram2[ , -which(names(datclean.dtm.gram2) 
                              %in% c("food good", "food great",
-                                    "go back", "good servic", "great servic"))] 
+                                    "go back", "good servic", "great servic", 
+                                    "realli good", "great place", "pretti good",
+                                    "great food", "seem like", "feel like"))] 
 # get bigram DTM form 
 mx.dtm.2gram <- as.matrix(datclean.dtm.gram2) # no need to remove business_id related info
 # remove rowSums = 0 rows 
@@ -84,19 +86,21 @@ mx.dtm.2gram <- mx.dtm.2gram[rowSums(mx.dtm.2gram)!=0, ]
 
 # LDA Topic Modeling #######################################################################
 # Run LDA using Gibbs sampling
-model_LDA_5topics_bigram <-LDA(mx.dtm.2gram[1:200,], k, method="Gibbs", 
+ptm <- proc.time()
+model_LDA_5topics_bigram <-LDA(mx.dtm.2gram, 8, method="Gibbs", 
                         control=list(nstart=nstart,seed = seed, 
                                      best=best, burnin = burnin, 
                                      iter = iter, thin=thin))
 
+print(proc.time() - ptm)
+
 # topic label for each review text line
-dat.topics.bigram <- #cbind(#datclean.dtm.overall$business_id[1:100], 
-                       as.data.frame(topics(model_LDA_5topics_bigram))
-#)
+dat.topics.bigram <- as.data.frame(topics(model_LDA_5topics_bigram))
+
 # top terms for each topic 
-dat.terms.bigram <- as.data.frame(terms(model_LDA_5topics_bigram, 20))
+dat.terms.bigram <- as.data.frame(terms(model_LDA_5topics_bigram, 10))
 
 # probability for each topic 
-topicProbabilities <- as.data.frame(model_LDA_5topics@gamma)
+topicProbabilities <- as.data.frame(model_LDA_5topics_bigram@gamma)
 
 
