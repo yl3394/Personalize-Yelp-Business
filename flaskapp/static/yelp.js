@@ -58,8 +58,8 @@ function createTable(elemId, response) {
 	var tr = tbl.insertRow();
 
 	// create hyperlink with restaurant ID
-        chartURL = URL_BASE + 'business/build_chart/' + bizID;
-        urlHtml = '<a href="' + chartURL + '" target="_blank">' + bizName + '</a>';
+	chartURL = URL_BASE + 'business/build_chart/' + bizID;
+	urlHtml = '<a href="' + chartURL + '" target="_blank">' + bizName + '</a>';
 	createCol(tr, urlHtml);
 
 	createCol(tr, tmp[2]);  // city

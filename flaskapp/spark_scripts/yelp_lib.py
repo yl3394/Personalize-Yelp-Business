@@ -1,5 +1,7 @@
 from pyspark.sql import SparkSession
 
+YELP_DATA_DIR = '/home/hadoop/yelp_data/'
+
 spark = SparkSession.builder.appName("yelp").getOrCreate()
 parqs = {}
 
@@ -11,7 +13,7 @@ def get_parq(name):
     :return: parquet file
     """
     if name not in parqs:
-        parqs[name] = spark.read.load('/home/hadoop/yelp_data/yelp_{}.parquet'.format(name))
+        parqs[name] = spark.read.load('{}yelp_{}.parquet'.format(YELP_DATA_DIR, name))
     return parqs[name]
 
 
