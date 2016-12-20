@@ -73,11 +73,13 @@ def get_business_info(business_id):
 
     checkins = yelp_lib.get_parq('checkin')
     checkins.registerTempTable("checkin")
-    checkin_df = spark.sql(
-        """select * from checkin where business_id = '{business_id}'""".format(business_id=business_id)).toPandas()
-    checkin_df['checkins'] = checkin_df['checkin_info'].apply(lambda x: sum(x.values()))
-
-    df['checkins'] = checkin_df['checkins'].values[0]
+    checkin_df = spark.sql("""select * from checkin where business_id = '{business_id}'""".format(business_id=business_id)).toPandas()
+    try:
+        checkin_df['checkins'] = checkin_df['checkin_info'].apply(lambda x: sum(x.values()))
+        df['checkins'] = checkin_df['checkins'].values[0]
+    except:
+        df['checkins'] = 0
+    
     return df
 
 def get_top_words(business_id, n):
