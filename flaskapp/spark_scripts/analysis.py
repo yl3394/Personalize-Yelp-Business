@@ -72,7 +72,7 @@ def get_business_info(business_id):
         """select * from business where business_id = '{business_id}'""".format(business_id=business_id)).toPandas()
 
 
-    checkins = spark.read.json('{}yelp_dataset_challenge_academic_dataset/yelp_academic_dataset_checkin.json'.format(YELP_DATA_DIR))
+    checkins = spark.read.json('/home/hadoop/yelp_dataset_challenge_academic_dataset/yelp_academic_dataset_checkin.json'.format(YELP_DATA_DIR))
     # checkins = yelp_lib.get_parq('checkin')
     checkins.registerTempTable("checkin")
 
