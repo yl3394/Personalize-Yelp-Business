@@ -630,7 +630,7 @@ print 'It took ' + i + ' iterations to sort the deck.';
                 .attr("y", 6)
                 .attr("dy", "0.71em")
                 .style("text-anchor", "end")
-                .text("Price ($)");
+                .text("Average Rating");
 
         chart1.append("path")
                 .datum(data)
@@ -695,7 +695,7 @@ print 'It took ' + i + ' iterations to sort the deck.';
                 .attr("y", 6)
                 .attr("dy", "0.71em")
                 .style("text-anchor", "end")
-                .text("Price ($)");
+                .text("Total ratings");
 
         chart2.append("path")
                 .datum(data)
@@ -754,9 +754,9 @@ d3.tsv("/analysis/review_count/{{business_id}}", function(error, data) {
       .data(data)
     .enter().append("rect")
       .attr("class", "bar")
-      .attr("x", function(d) { return x(d.word); })
+      .attr("x", function(d) { return word_x(d.word); })
       .attr("width", word_x.bandwidth())
-      .attr("y", function(d) { return y(d.frequency); })
+      .attr("y", function(d) { return word_y(d.frequency); })
       .attr("height", function(d) { return word_height - y(d.frequency); });
 
   // add the x Axis
