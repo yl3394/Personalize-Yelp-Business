@@ -587,8 +587,8 @@ print 'It took ' + i + ' iterations to sort the deck.';
 <script>
 $(document).ready(function(){
       $.ajax({
-          type: "GET"
-          url: "/analysis/top_words/{{business_id}}",
+          type: 'GET'
+          url: '/analysis/top_words/{{business_id}}',
           dataType: 'json',
           success: function(result){
                 var data = {
