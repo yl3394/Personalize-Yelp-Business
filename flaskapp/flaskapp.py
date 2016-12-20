@@ -49,5 +49,10 @@ def analysis_review_avg(business_id):
 def analysis_top_words(business_id):
     return analysis.get_top_words(business_id, n=30)
 
+@app.route('/analysis/checkins/<business_id>')
+def analysis_checkins(business_id):
+    return analysis.get_checkins(business_id)
+
+    
 if __name__ == '__main__':
     app.run()
