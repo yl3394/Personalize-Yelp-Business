@@ -589,8 +589,9 @@ $(document).ready(function(){
       $.ajax({
           type: 'GET',
           url: 'http://ec2-52-201-219-76.compute-1.amazonaws.com/analysis/top_words/{{business_id}}',
-          dataType: 'tsv',
+          dataType: 'json',
           success: function(result){
+            console.log(result);
                 var data = {
                     labels: ["January", "February", "March", "April", "May", "June", "July"],
                     datasets: [
