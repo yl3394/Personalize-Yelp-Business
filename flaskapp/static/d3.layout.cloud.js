@@ -19,6 +19,12 @@ function d3_rebind(target, source, method) {
 }
 
 
+d3.functor = function functor(v) {
+  return typeof v === "function" ? v : function() {
+    return v;
+  };
+};
+
     function cloud() {
         var size = [256, 256],
             text = cloudText,
