@@ -65,8 +65,9 @@
     <h2>Wordcloud</h2>
     <svg id='top_words' width="960" height="500"><text id='top_words_load' font-size="45" x="0" y="100">Loading</text></svg>
 
-<div>
-<canvas id="myChart" width="400" height="400"></canvas></div>
+<div><canvas id="myChart" width="400" height="400"></canvas></div>
+
+<div><canvas id="rating_avg_chart" width="400" height="400"></canvas></div>
 
     <h2>More coming soon!</h2>
 </section>
@@ -591,9 +592,7 @@ $(document).ready(function(){
           url: 'http://ec2-52-201-219-76.compute-1.amazonaws.com/analysis/top_words/{{business_id}}',
           dataType: 'json',
           success: function(result){
-            console.log(result);
-            console.log('test');
-            
+
                 var data = {
                     labels: ["January", "February", "March", "April", "May", "June", "July"],
                     datasets: [
@@ -630,6 +629,35 @@ $(document).ready(function(){
   });
 </script>
 
+
+<script>
+$(document).ready(function(){
+      $.ajax({
+          type: 'GET',
+          url: 'http://ec2-52-201-219-76.compute-1.amazonaws.com/analysis/review_avg/{{business_id}}',
+          dataType: 'json',
+          success: function(result){
+            console.log(result);
+            
+                var data = {
+                    labels: result['date'],
+                    datasets: [
+                        {
+                            label: "Average Rating",
+                            borderWidth: 1,
+                            data: result['avg_rating'],
+                        }
+                    ]
+                };
+
+              var ctx = document.getElementById("rating_avg_chart");
+                var myBarChart = new Chart(ctx, {
+                type: 'line',
+                data: data
+                      });
+              }});
+  });
+</script>
 
 
 <script>

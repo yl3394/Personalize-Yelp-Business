@@ -61,7 +61,8 @@ def get_review_avg_by_date(business_id):
     df = spark.sql(
         """select * from review where business_id = '{business_id}'""".format(business_id=business_id)).toPandas()
     review_count = review_avg_by_date(df)
-    return review_count.to_csv(None, sep='\t', header=True, index=False)
+    return json.dumps({'date':review_count['date'], 
+                        'avg_rating': review_count['avg_rating']})
 
 
 def get_business_info(business_id):
