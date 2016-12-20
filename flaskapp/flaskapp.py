@@ -27,10 +27,13 @@ def build_chart(business_id):
     avg_stars = business_info.stars.values[0]
     review_count = business_info.review_count.values[0]
     checkins = business_info.checkins.values[0]
+
+
     return render_template('yelp_restaurant.html', business_id=business_id, business_name=business_name,
     	avg_stars = avg_stars,
     	review_count = review_count,
-    	checkins=checkins)
+    	checkins=checkins
+    )
 
 
 @app.route('/analysis/review_count/<business_id>')

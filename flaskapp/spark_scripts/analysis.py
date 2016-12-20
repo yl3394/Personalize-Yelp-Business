@@ -71,16 +71,12 @@ def get_business_info(business_id):
     df = spark.sql(
         """select * from business where business_id = '{business_id}'""".format(business_id=business_id)).toPandas()
 
-
-    checkins = spark.read.json('{}yelp_academic_dataset_checkin.json'.format(YELP_DATA_DIR))
-    # checkins = yelp_lib.get_parq('checkin')
-    checkins.registerTempTable("checkin")
-
-    print spark.sql("""select * from checkin limit 10""").toPandas().head()
-    checkin_df = spark.sql("""select * from checkin where business_id = '{business_id}'""".format(business_id=business_id)).toPandas()
+    checkin_file = '{}yelp_academic_dataset_checkin.json'.format(YELP_DATA_DIR)
+    checkins = pd.read_json(checkin_file, orient='records')
+    checkins = checkins[checkins['business_id'] == business_id]
     try:
-        checkin_df['checkins'] = checkin_df['checkin_info'].apply(lambda x: sum(x.values()))
-        df['checkins'] = checkin_df['checkins'].values[0]
+        checkins['checkins'] = checkins['checkin_info'].apply(lambda x: sum(x.values()))
+        df['checkins'] = checkins['checkins'].values[0]
     except:
         df['checkins'] = 0
     
