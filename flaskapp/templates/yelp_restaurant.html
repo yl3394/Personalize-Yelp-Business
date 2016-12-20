@@ -709,48 +709,68 @@ print 'It took ' + i + ' iterations to sort the deck.';
 
 
 
-<script src="/static/d3-cloud.js"></script>
+
+
 
 <script>
 
-var fill = d3.scale.category20();
+// set the dimensions and margins of the graph
+var margin = {top: 20, right: 20, bottom: 30, left: 40},
+    width = 960 - margin.left - margin.right,
+    height = 500 - margin.top - margin.bottom;
 
-var layout = cloud()
-    .size([500, 500])
-    .words([
-      "Hello", "world", "normally", "you", "want", "more", "words",
-      "than", "this"].map(function(d) {
-      return {text: d, size: 10 + Math.random() * 90, test: "haha"};
-    }))
-    .padding(5)
-    .rotate(function() { return ~~(Math.random() * 2) * 90; })
-    .font("Impact")
-    .fontSize(function(d) { return d.size; })
-    .on("end", draw);
+// set the ranges
+var x = d3.scaleBand()
+          .range([0, width])
+          .padding(0.1);
+var y = d3.scaleLinear()
+          .range([height, 0]);
+          
+// append the svg object to the body of the page
+// append a 'group' element to 'svg'
+// moves the 'group' element to the top left margin
+var top_words = d3.select("#top_words")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+  .append("g")
+    .attr("transform", 
+          "translate(" + margin.left + "," + margin.top + ")");
 
-layout.start();
+// get the data
 
-function draw(words) {
-  d3.select("body").append("svg")
-      .attr("width", layout.size()[0])
-      .attr("height", layout.size()[1])
-    .append("g")
-      .attr("transform", "translate(" + layout.size()[0] / 2 + "," + layout.size()[1] / 2 + ")")
-    .selectAll("text")
-      .data(words)
-    .enter().append("text")
-      .style("font-size", function(d) { return d.size + "px"; })
-      .style("font-family", "Impact")
-      .style("fill", function(d, i) { return fill(i); })
-      .attr("text-anchor", "middle")
-      .attr("transform", function(d) {
-        return "translate(" + [d.x, d.y] + ")rotate(" + d.rotate + ")";
-      })
-      .text(function(d) { return d.text; });
-}
+d3.tsv("/analysis/review_count/{{business_id}}", function(error, data) {
+  if (error) throw error;
+
+  // format the data
+  data.forEach(function(d) {
+    d.frequency = +d.frequency;
+  });
+
+  // Scale the range of the data in the domains
+  x.domain(data.map(function(d) { return d.word; }));
+  y.domain([0, d3.max(data, function(d) { return d.frequency; })]);
+
+  // append the rectangles for the bar chart
+  top_words.selectAll(".bar")
+      .data(data)
+    .enter().append("rect")
+      .attr("class", "bar")
+      .attr("x", function(d) { return x(d.word); })
+      .attr("width", x.bandwidth())
+      .attr("y", function(d) { return y(d.frequency); })
+      .attr("height", function(d) { return height - y(d.frequency); });
+
+  // add the x Axis
+  top_words.append("g")
+      .attr("transform", "translate(0," + height + ")")
+      .call(d3.axisBottom(x));
+
+  // add the y Axis
+  top_words.append("g")
+      .call(d3.axisLeft(y));
+
+});
 
 </script>
-
-
 
 </html>
