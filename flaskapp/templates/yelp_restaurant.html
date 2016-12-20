@@ -757,7 +757,7 @@ d3.tsv("/analysis/review_count/{{business_id}}", function(error, data) {
       .attr("x", function(d) { return word_x(d.word); })
       .attr("width", word_x.bandwidth())
       .attr("y", function(d) { return word_y(d.frequency); })
-      .attr("height", function(d) { return word_height - y(d.frequency); });
+      .attr("height", function(d) { return word_height - word_y(d.frequency); });
 
   // add the x Axis
   top_words.append("g")
