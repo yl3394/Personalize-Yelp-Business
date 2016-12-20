@@ -73,6 +73,8 @@ def get_business_info(business_id):
 
     checkins = yelp_lib.get_parq('checkin')
     checkins.registerTempTable("checkin")
+
+    print spark.sql("""select * from checkin limit 10""").toPandas().head()
     checkin_df = spark.sql("""select * from checkin where business_id = '{business_id}'""".format(business_id=business_id)).toPandas()
     try:
         checkin_df['checkins'] = checkin_df['checkin_info'].apply(lambda x: sum(x.values()))
