@@ -592,6 +592,8 @@ $(document).ready(function(){
           dataType: 'json',
           success: function(result){
             console.log(result);
+            console.log('test');
+            
                 var data = {
                     labels: ["January", "February", "March", "April", "May", "June", "July"],
                     datasets: [
@@ -622,7 +624,7 @@ $(document).ready(function(){
               var ctx = document.getElementById("myChart");
                 var myBarChart = new Chart(ctx, {
                 type: 'bar',
-              data: data
+                data: data
                       });
               }});
   });
