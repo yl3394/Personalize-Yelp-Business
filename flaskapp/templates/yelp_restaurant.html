@@ -709,7 +709,7 @@ print 'It took ' + i + ' iterations to sort the deck.';
 
 
 
-
+<!--
 
 
 <script>
@@ -768,9 +768,10 @@ d3.tsv("/analysis/review_count/{{business_id}}", function(error, data) {
   // add the y Axis
   top_words.append("g")
       .call(d3.axisLeft(y));
-
+  
+  d3.select("#top_words_load").remove();
 });
 
 </script>
-
+-->
 </html>
