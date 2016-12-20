@@ -72,7 +72,7 @@ def get_business_info(business_id):
         """select * from business where business_id = '{business_id}'""".format(business_id=business_id)).toPandas()
 
     checkin_file = '{}yelp_academic_dataset_checkin.json'.format(YELP_DATA_DIR)
-    checkins = pd.read_json(checkin_file, orient='records')
+    checkins = pd.read_json(checkin_file, orient='records', lines=True)
     checkins = checkins[checkins['business_id'] == business_id]
     try:
         checkins['checkins'] = checkins['checkin_info'].apply(lambda x: sum(x.values()))
