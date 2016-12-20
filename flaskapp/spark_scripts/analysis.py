@@ -1,6 +1,6 @@
 import sys
 import pandas as pd
-
+import json
 import yelp_lib
 
 YELP_DATA_DIR = '/home/hadoop/yelp_data/'
@@ -114,8 +114,8 @@ def get_checkins(business_id):
      .reset_index()
      )
 
-    return {'day': checkins_by_day.to_csv(None, sep='\t', header=True, index=False), 
-            'hour': checkins_by_hour.to_csv(None, sep='\t', header=True, index=False)}
+    return json.dumps({'day': checkins_by_day.to_csv(None, sep='\t', header=True, index=False), 
+            'hour': checkins_by_hour.to_csv(None, sep='\t', header=True, index=False)})
 
 
 def get_top_words(business_id, n):
