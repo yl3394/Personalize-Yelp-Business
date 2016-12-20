@@ -60,8 +60,8 @@
     <h2>Wordcloud</h2>
     <svg id='top_words' width="960" height="500"><text id='top_words_load' font-size="45" x="0" y="100">Loading</text></svg>
 
-
-<canvas id="myChart" width="400" height="400"></canvas>
+<div>
+<canvas id="myChart" width="400" height="400"></canvas></div>
 
     <h2>More coming soon!</h2>
 </section>
@@ -580,7 +580,12 @@ print 'It took ' + i + ' iterations to sort the deck.';
 
 <script>
 
-var data = {
+
+
+$.ajax({url: "/analysis/review_avg/{{business_id}}",
+    dataType: 'json',
+    success: function(result){
+        var data = {
     labels: ["January", "February", "March", "April", "May", "June", "July"],
     datasets: [
         {
@@ -607,12 +612,19 @@ var data = {
     ]
 };
 
-var ctx = document.getElementById("myChart");
-var myBarChart = new Chart(ctx, {
-    type: 'bar',
-    data: data
-});
+        var ctx = document.getElementById("myChart");
+        var myBarChart = new Chart(ctx, {
+        type: 'bar',
+      data: data
+      });
+}});
+
+
+
 </script>
+
+
+
 <script>
 
     var svg = d3.select("#rating_avg"),
