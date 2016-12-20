@@ -125,7 +125,7 @@ def get_top_words(business_id, n):
     words = words.sort_values('word_freq', ascending=False) # CHANGE TO SORT VALUES
     words = words.reset_index()
     words.columns = ['word','frequency']
-    return words.head(n).to_csv(None, sep='\t', header=True, index=False)
+    return words.head(n).to_json(orient='records')
 
 def main(business_id):
     df = spark.sql(
