@@ -587,7 +587,7 @@ print 'It took ' + i + ' iterations to sort the deck.';
 <script>
 $(document).ready(function(){
       $.ajax({
-          type: 'GET'
+          type: 'GET',
           url: 'http://ec2-52-201-219-76.compute-1.amazonaws.com/analysis/top_words/{{business_id}}',
           dataType: 'tsv',
           success: function(result){
