@@ -35,6 +35,9 @@ def analysis_review_count(business_id):
 def analysis_review_avg(business_id):
     return analysis.get_review_avg_by_date(business_id)
 
+@app.route('/analysis/top_words/<business_id>')
+def analysis_review_avg(business_id):
+    return analysis.get_top_words(business_id, n=30)
 
 if __name__ == '__main__':
     app.run()
