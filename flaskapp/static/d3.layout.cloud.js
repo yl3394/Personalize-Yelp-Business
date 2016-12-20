@@ -1,6 +1,24 @@
 // Word cloud layout by Jason Davies, http://www.jasondavies.com/word-cloud/
 // Algorithm due to Jonathan Feinberg, http://static.mrfeinberg.com/bv_ch03.pdf
 (function(exports) {
+
+    temp_rebind = function(target, source) {
+  var i = 1, n = arguments.length, method;
+  while (++i < n) target[method = arguments[i]] = d3_rebind(target, source, source[method]);
+  return target;
+};
+
+// Method is assumed to be a standard D3 getter-setter:
+// If passed with no arguments, gets the value.
+// If passed with arguments, sets the value and returns the target.
+function d3_rebind(target, source, method) {
+  return function() {
+    var value = method.apply(source, arguments);
+    return value === source ? target : value;
+  };
+}
+
+
     function cloud() {
         var size = [256, 256],
             text = cloudText,
@@ -189,7 +207,7 @@
             return cloud;
         };
 
-        return d3.rebind(cloud, event, "on");
+        return temp_rebind(cloud, event, "on");
     }
 
     function cloudText(d) {
