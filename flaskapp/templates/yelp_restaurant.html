@@ -51,11 +51,11 @@
     <h2>Average review over time</h2>
     <p> Caption goes here</p>
     {{business_info}}
-    <svg id='rating_avg' width="960" height="500"><text font-size="45" x="0" y="100">Loading</text></svg>
+    <svg id='rating_avg' width="960" height="500"><text id='rating_avg_load' font-size="45" x="0" y="100">Loading</text></svg>
 
     <h2>Total reviews over time</h2>
     <p> Caption goes here</p>
-    <svg id='rating_count' width="960" height="500"><text font-size="45" x="0" y="100">Loading</text></svg>
+    <svg id='rating_count' width="960" height="500"><text id='rating_count_load' font-size="45" x="0" y="100">Loading</text></svg>
 
 
     <h2>More coming soon!</h2>
@@ -611,6 +611,8 @@ print 'It took ' + i + ' iterations to sort the deck.';
                 .datum(data)
                 .attr("class", "line")
                 .attr("d", line1);
+
+        d3.select("#rating_avg_load").remove();
     });
 
 </script>
