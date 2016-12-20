@@ -3,6 +3,7 @@ import pandas as pd
 
 import yelp_lib
 
+YELP_DATA_DIR = '/home/hadoop/yelp_data/'
 
 def review_count_by_date(df):
     df['date'] = pd.to_datetime(df['date'])
@@ -72,7 +73,7 @@ def get_business_info(business_id):
     return df
 
 def get_top_words(business_id, n):
-    word_freq = pd.read_json('./wordfreq_bybusinessid_bigram.json', orient='records')
+    word_freq = pd.read_json('{}wordfreq_bybusinessid_bigram.json'.format(YELP_DATA_DIR), orient='records')
     words = word_freq[word_freq['business_id'] == business_id].drop('business_id', axis=1).T
     words.columns = ['word_freq']
     words = words.sort_values('word_freq', ascending=False) # CHANGE TO SORT VALUES
