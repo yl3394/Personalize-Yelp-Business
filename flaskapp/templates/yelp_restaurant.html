@@ -587,6 +587,7 @@ print 'It took ' + i + ' iterations to sort the deck.';
 
 <script>
 $(document).ready(function(){
+<!--
       $.ajax({
           type: 'GET',
           url: 'http://ec2-52-201-219-76.compute-1.amazonaws.com/analysis/top_words/{{business_id}}',
@@ -625,13 +626,8 @@ $(document).ready(function(){
                 type: 'bar',
                 data: data
                       });
-              }});
-  });
-</script>
+              }});-->
 
-
-<script>
-$(document).ready(function(){
       $.ajax({
           type: 'GET',
           url: 'http://ec2-52-201-219-76.compute-1.amazonaws.com/analysis/review_avg/{{business_id}}',
