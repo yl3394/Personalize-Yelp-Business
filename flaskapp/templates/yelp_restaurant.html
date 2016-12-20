@@ -51,15 +51,46 @@
     <h2>Average review over time</h2>
     <p> Caption goes here</p>
     {{business_info}}
-    <svg id='rating_avg' width="960" height="500"></svg>
+
+    {{checkins}}
+    {{avg_stars}}
+    {{review_count}}
+    
+    <svg id='rating_avg' width="960" height="500"><text id='rating_avg_load' font-size="45" x="0" y="100">Loading</text></svg>
 
     <h2>Total reviews over time</h2>
     <p> Caption goes here</p>
-    <svg id='rating_count' width="960" height="500"></svg>
+    <svg id='rating_count' width="960" height="500"><text id='rating_count_load' font-size="45" x="0" y="100">Loading</text></svg>
 
+    <h2>Wordcloud</h2>
+    <svg id='top_words' width="960" height="500"><text id='top_words_load' font-size="45" x="0" y="100">Loading</text></svg>
+
+<div>
+<canvas id="myChart" width="400" height="400"></canvas></div>
 
     <h2>More coming soon!</h2>
 </section>
+
+
+
+
+
+
+<style>
+    body {
+        font-family:"Lucida Grande","Droid Sans",Arial,Helvetica,sans-serif;
+    }
+    .legend {
+        border: 1px solid #555555;
+        border-radius: 5px 5px 5px 5px;
+        font-size: 0.8em;
+        margin: 10px;
+        padding: 8px;
+    }
+    .bld {
+        font-weight: bold;
+    }
+</style>
 
 
 <!--
@@ -547,10 +578,60 @@ print 'It took ' + i + ' iterations to sort the deck.';
 <script src="/static/assets/js/main.js"></script>
 
 </body>
-</html>
 
 
 <script src="https://d3js.org/d3.v4.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/Chart.bundle.min.js"></script>
+
+<script>
+
+$(document).ready(function(){
+      $.ajax({
+          type: "GET"
+          url: "/analysis/top_words/{{business_id}}",
+          dataType: 'json',
+          success: function(result){
+                var data = {
+                    labels: ["January", "February", "March", "April", "May", "June", "July"],
+                    datasets: [
+                        {
+                            label: "My First dataset",
+                            backgroundColor: [
+                                'rgba(255, 99, 132, 0.2)',
+                                'rgba(54, 162, 235, 0.2)',
+                                'rgba(255, 206, 86, 0.2)',
+                                'rgba(75, 192, 192, 0.2)',
+                                'rgba(153, 102, 255, 0.2)',
+                                'rgba(255, 159, 64, 0.2)'
+                            ],
+                            borderColor: [
+                                'rgba(255,99,132,1)',
+                                'rgba(54, 162, 235, 1)',
+                                'rgba(255, 206, 86, 1)',
+                                'rgba(75, 192, 192, 1)',
+                                'rgba(153, 102, 255, 1)',
+                                'rgba(255, 159, 64, 1)'
+                            ],
+                            borderWidth: 1,
+                            data: [65, 59, 80, 81, 56, 55, 40],
+                        }
+                    ]
+                };
+
+              var ctx = document.getElementById("myChart");
+                var myBarChart = new Chart(ctx, {
+                type: 'bar',
+              data: data
+              });
+      }});
+  });
+
+
+
+
+
+</script>
+
 
 
 <script>
@@ -605,12 +686,14 @@ print 'It took ' + i + ' iterations to sort the deck.';
                 .attr("y", 6)
                 .attr("dy", "0.71em")
                 .style("text-anchor", "end")
-                .text("Price ($)");
+                .text("Average Rating");
 
         chart1.append("path")
                 .datum(data)
                 .attr("class", "line")
                 .attr("d", line1);
+
+        d3.select("#rating_avg_load").remove();
     });
 
 </script>
@@ -668,12 +751,84 @@ print 'It took ' + i + ' iterations to sort the deck.';
                 .attr("y", 6)
                 .attr("dy", "0.71em")
                 .style("text-anchor", "end")
-                .text("Price ($)");
+                .text("Total ratings");
 
         chart2.append("path")
                 .datum(data)
                 .attr("class", "line")
                 .attr("d", line2);
+
+        d3.select("#rating_count_load").remove();
     });
 
 </script>
+
+
+
+<!--
+
+<script>
+
+// set the dimensions and margins of the graph
+var word_margin = {top: 20, right: 20, bottom: 30, left: 40},
+    word_width = 960 - word_margin.left - word_margin.right,
+    word_height = 500 - word_margin.top - word_margin.bottom;
+
+// set the ranges
+var word_x = d3.scaleBand()
+          .range([0, width])
+          .padding(0.1);
+var word_y = d3.scaleLinear()
+          .range([height, 0]);
+          
+// append the svg object to the body of the page
+// append a 'group' element to 'svg'
+// moves the 'group' element to the top left margin
+var top_words = d3.select("#top_words")
+    .attr("width", word_width + word_margin.left + word_margin.right)
+    .attr("height", word_height + word_margin.top + word_margin.bottom)
+  .append("g")
+    .attr("transform", 
+          "translate(" + word_margin.left + "," + word_margin.top + ")");
+
+// get the data
+
+d3.tsv("/analysis/review_count/{{business_id}}", function(error, data) {
+  if (error) throw error;
+
+  // format the data
+  data.forEach(function(d) {
+    d.frequency = +d.frequency;
+  });
+
+  // Scale the range of the data in the domains
+  word_x.domain(data.map(function(d) { return d.word; }));
+  word_y.domain([0, d3.max(data, function(d) { return d.frequency; })]);
+
+  // append the rectangles for the bar chart
+  top_words.selectAll(".bar")
+      .data(data)
+    .enter().append("rect")
+      .attr("class", "bar")
+      .attr("x", function(d) { return word_x(d.word); })
+      .attr("width", word_x.bandwidth())
+      .attr("y", function(d) { return word_y(d.frequency); })
+      .attr("height", function(d) { return word_height - word_y(d.frequency); });
+
+  // add the x Axis
+  top_words.append("g")
+      .attr("transform", "translate(0," + word_height + ")")
+      .call(d3.axisBottom(word_x));
+
+  // add the y Axis
+  top_words.append("g")
+      .call(d3.axisLeft(word_y));
+  
+  d3.select("#top_words_load").remove();
+});
+
+</script>
+-->
+
+
+</html>
