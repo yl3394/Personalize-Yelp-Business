@@ -60,16 +60,15 @@
     <p> Caption goes here</p>
 
     
-<div>
+<div  width="400" height="400">
 <h3 id='rating_avg_load'>Loading</h3>
 <canvas id="rating_avg" style="width: 400px; height: 400px;"></canvas>
-
 </div>
 
     <h2>Total reviews over time</h2>
     <p> Caption goes here</p>
 <h3 id='rating_count_load' font-size="60">Loading</h3>
-<canvas id="rating_count" width="400" height="400px"></canvas>
+<canvas id="rating_count" width="400" height="400"></canvas>
 
 
     <h2>Wordcloud</h2>
@@ -618,12 +617,14 @@ $(document).ready(function(){
                 };
 
               var ctx = document.getElementById("rating_count");
+                ctx.canvas.width = 400;
+                ctx.canvas.height = 400;
+                
                 var myBarChart = new Chart(ctx, {
                 type: 'line',
                 data: data
                       });
-                ctx.canvas.width = 400;
-                ctx.canvas.height = 400;
+
                 d3.select("#rating_count_load").remove();
               }});
 
