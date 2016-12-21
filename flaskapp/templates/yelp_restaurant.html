@@ -110,7 +110,8 @@
 
 
 <h2>Wordcloud</h2>
-<svg id='top_words' width="960" height="500"><text id='top_words_load' font-size="60" x="0" y="0">Loading</text></svg>
+<h3 id='top_words_load' font-size="60">Loading</h3>
+<svg id='top_words' width="960" height="500"></svg>
 
     <h2>More coming soon!</h2>
 </section>
@@ -786,7 +787,7 @@ $(document).ready(function(){
                       .domain([0,2,4,8,16,32,64,128,256,512,1024])
                       .range(["#ddd", "#ccc", "#bbb", "#aaa", "#999", "#888", "#777", "#666", "#555", "#444", "#333", "#222"]);
 
-              d3.layout.cloud().size([800, 1200])
+              d3.layout.cloud().size([800, 1500])
                       .words(result)
                       .rotate(0)
                       .fontSize(function(d) { return d.frequency; })
@@ -796,7 +797,7 @@ $(document).ready(function(){
               function draw(words) {
                   d3.select("#top_words")
                           .attr("width", 800)
-                          .attr("height", 1200)
+                          .attr("height", 1500-)
                           .attr("class", "wordcloud")
                           .append("g")
                           // without the transform, words words would get cutoff to the left and top, they would

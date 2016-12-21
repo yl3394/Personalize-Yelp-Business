@@ -2,6 +2,10 @@ import sys
 import pandas as pd
 import json
 import yelp_lib
+from pyspark.sql.functions import explode
+from pyspark.ml.feature import Tokenizer, RegexTokenizer
+from pyspark.ml.feature import StopWordsRemover
+from pyspark.ml.feature import CountVectorizer
 
 YELP_DATA_DIR = '/home/hadoop/yelp_data/'
 
@@ -121,6 +125,30 @@ def get_checkins(business_id):
                       'hour': {'hour':checkins_by_hour['hour'].tolist(), 
                         'checkins': checkins_by_hour['checkins'].tolist()}, 
                         })
+
+
+
+def get_ngrams(business_id, n):
+    spark = yelp_lib.spark
+    review = yelp_lib.get_parq('review')
+    business_df = review.filter(review['business_id'] == business_id)
+
+    # tokenizer = Tokenizer(inputCol="text", outputCol="words")
+    regexTokenizer = RegexTokenizer(inputCol="text", outputCol="words", pattern="\\W")
+    wordsDataFrame = regexTokenizer.transform(business_df)
+
+    remover = StopWordsRemover(inputCol="words", outputCol="filtered")
+    cleaned = remover.transform(wordsDataFrame)
+
+    all_words = cleaned.select(explode('filtered'))
+    word_counts = all_words.rdd.countByValue()
+    word_count_df = pd.DataFrame.from_dict(word_counts, orient='index')
+    word_count_df.index = map(lambda x: x[0], word_count_df.index)
+    word_count_df.columns = ['word_freq']
+    word_count_df = word_count_df.sort_values('word_freq', ascending=False) # CHANGE TO SORT VALUES
+    word_count_df = word_count_df.reset_index()
+    word_count_df.columns = ['word','frequency']
+    return word_count_df.head(n).to_json(orient='records')
 
 
 def get_top_words(business_id, n):
