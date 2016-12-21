@@ -148,7 +148,7 @@ def get_top_words(business_id, n):
     word_count_df = word_count_df.sort_values('word_freq', ascending=False) 
     word_count_df = word_count_df.reset_index()
     word_count_df.columns = ['word','frequency']
-    word_count_df['frequency'] = word_count_df['frequency'] / word_count_df['frequency'].max() * 50.
+    word_count_df['frequency'] = word_count_df['frequency'] / word_count_df['frequency'].max() * 60.
     return word_count_df.head(n).to_json(orient='records')
 
 
