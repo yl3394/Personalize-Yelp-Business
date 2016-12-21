@@ -49,7 +49,16 @@ def analysis_review_avg(business_id):
 
 @app.route('/analysis/top_words/<business_id>')
 def analysis_top_words(business_id):
-    return analysis.get_top_words(business_id, n=30)
+    return analysis.get_top_words(business_id, n=35)
+
+@app.route('/analysis/top_good_words/<business_id>')
+def analysis_top_good_words(business_id):
+    return analysis.get_top_words(business_id, n=35)
+
+@app.route('/analysis/top_bad_words/<business_id>')
+def analysis_top_bad_words(business_id):
+    return analysis.get_top_words(business_id, n=35)
+
 
 @app.route('/analysis/checkins/<business_id>')
 def analysis_checkins(business_id):
@@ -61,7 +70,7 @@ def analysis_reviews(business_id):
 
 @app.route('/analysis/overlap/<business_id>')
 def analysis_overlap(business_id):
-    return analysis.get_review_overlap(business_id, n=10)
+    return analysis.get_review_overlap(business_id, n=15)
     
 
 if __name__ == '__main__':

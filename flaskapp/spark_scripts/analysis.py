@@ -135,11 +135,14 @@ def get_reviews(business_id, n):
     business_df = business_df.sort_values('usefulness', ascending=False)
     return business_df.head(n).to_dict(orient='records')
 
-def get_top_words(business_id, n):
+def get_top_words(business_id, n, kind='all'):
     spark = yelp_lib.spark
     review = yelp_lib.get_parq('review')
     business_df = review.filter(review['business_id'] == business_id)
-
+    if kind == 'good':
+        business_df = business_df.filter(business_df['stars'] >= 4)
+    elif kind == 'bad':
+        business_df = business_df.filter(business_df['stars'] < 4)
     # tokenizer = Tokenizer(inputCol="text", outputCol="words")
     regexTokenizer = RegexTokenizer(inputCol="text", outputCol="words", pattern="\\W")
     wordsDataFrame = regexTokenizer.transform(business_df)
