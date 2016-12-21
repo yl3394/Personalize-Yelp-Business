@@ -127,6 +127,12 @@ def get_checkins(business_id):
                         })
 
 
+def get_reviews(business_id):
+    spark = yelp_lib.spark
+    review = yelp_lib.get_parq('review')
+    business_df = review.filter(review['business_id'] == business_id).toPandas()
+
+    return business_df.to_json(orient='records')
 
 def get_top_words(business_id, n):
     spark = yelp_lib.spark
