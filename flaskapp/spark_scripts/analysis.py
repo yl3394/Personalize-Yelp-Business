@@ -116,8 +116,11 @@ def get_checkins(business_id):
      .reset_index()
      )
 
-    return json.dumps({'day': checkins_by_day.to_csv(None, sep='\t', header=True, index=False), 
-            'hour': checkins_by_hour.to_csv(None, sep='\t', header=True, index=False)})
+    return json.dumps({'day': {'day':checkins_by_day['day'].tolist(), 
+                        'checkins': checkins_by_day['checkins'].tolist()}, 
+                      'hour': {'hour':checkins_by_hour['hour'].tolist(), 
+                        'checkins': checkins_by_hour['checkins'].tolist()}, 
+                        })
 
 
 def get_top_words(business_id, n):

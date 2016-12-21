@@ -96,6 +96,22 @@
 <canvas id="rating_count" width="700" height="500"></canvas>
 </div>
 
+
+<div>
+    <h2>Checkins by day</h2>
+    <p> Caption goes here</p>
+<h3 id='checkins_day_load' font-size="60">Loading</h3>
+<canvas id="checkins_day" width="700" height="500"></canvas>
+</div>
+
+<div>
+    <h2>Checkins by hour</h2>
+    <p> Caption goes here</p>
+<h3 id='checkins_hour_load' font-size="60">Loading</h3>
+<canvas id="checkins_hour" width="700" height="500"></canvas>
+</div>
+
+
     <h2>Wordcloud</h2>
     <svg id='top_words' width="960" height="500"><text id='top_words_load' font-size="60" x="0" y="0">Loading</text></svg>
 
@@ -696,6 +712,75 @@ $(document).ready(function(){
 
             
   });
+
+
+      $.ajax({
+          type: 'GET',
+          url: 'http://ec2-52-201-219-76.compute-1.amazonaws.com/analysis/checkins/{{business_id}}',
+          dataType: 'json',
+          success: function(result){
+            
+                var day_data = {
+                    labels: result['day']['day'],
+                    datasets: [
+                        {
+                            label: "Checkins",
+                            borderWidth: 2,
+                            borderColor: "#6699CC",
+                            data: result['day']['checkins'],
+
+                        }
+                    ]
+                };
+
+                var hour_data = {
+                    labels: result['hour']['hour'],
+                    datasets: [
+                        {
+                            label: "Checkins",
+                            borderWidth: 2,
+                            borderColor: "#6699CC",
+                            data: result['hour']['checkins'],
+
+                        }
+                    ]
+                };
+
+              var ctx_hour = document.getElementById("checkins_hour");
+              var ctx_day = document.getElementById("checkins_day");
+              
+              var checkinsDayChart = new Chart(ctx_day, {
+                type: 'bar',
+                data: day_data,
+                options: {
+                  responsive: false
+                    }
+                      });
+
+              var checkinsDayChart = new Chart(ctx_hour, {
+                type: 'bar',
+                data: hour_data,
+                options: {
+                  responsive: false
+                    }
+                      });
+
+               ctx_day.style.display = 'inline-block';
+               ctx_hour.style.display = 'inline-block';
+
+                d3.select("#checkins_day_load").remove();
+
+                d3.select("#checkins_hour_load").remove();
+
+
+
+
+              }});
+
+            
+  });
+
+
 </script>
 
 
