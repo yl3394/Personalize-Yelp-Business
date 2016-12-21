@@ -127,12 +127,13 @@ def get_checkins(business_id):
                         })
 
 
-def get_reviews(business_id):
+def get_reviews(business_id, n):
     spark = yelp_lib.spark
     review = yelp_lib.get_parq('review')
     business_df = review.filter(review['business_id'] == business_id).toPandas()
-
-    return business_df.to_json(orient='records')
+    business_df['usefulness'] = business_df['votes'].apply(lambda x: x[1])
+    business_df = business_df.sort_values('usefulness', ascending=False)
+    return business_df.head(n).to_json(orient='records')
 
 def get_top_words(business_id, n):
     spark = yelp_lib.spark
