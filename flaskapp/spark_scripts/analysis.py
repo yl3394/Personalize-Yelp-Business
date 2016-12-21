@@ -128,7 +128,7 @@ def get_checkins(business_id):
 
 
 
-def get_ngrams(business_id, n):
+def get_top_words(business_id, n):
     spark = yelp_lib.spark
     review = yelp_lib.get_parq('review')
     business_df = review.filter(review['business_id'] == business_id)
@@ -151,14 +151,14 @@ def get_ngrams(business_id, n):
     return word_count_df.head(n).to_json(orient='records')
 
 
-def get_top_words(business_id, n):
-    word_freq = pd.read_json('{}wordfreq_bybusinessid_bigram.json'.format(YELP_DATA_DIR), orient='records')
-    words = word_freq[word_freq['business_id'] == business_id].drop('business_id', axis=1).T
-    words.columns = ['word_freq']
-    words = words.sort_values('word_freq', ascending=False) # CHANGE TO SORT VALUES
-    words = words.reset_index()
-    words.columns = ['word','frequency']
-    return words.head(n).to_json(orient='records')
+# def get_top_words(business_id, n):
+#     word_freq = pd.read_json('{}wordfreq_bybusinessid_bigram.json'.format(YELP_DATA_DIR), orient='records')
+#     words = word_freq[word_freq['business_id'] == business_id].drop('business_id', axis=1).T
+#     words.columns = ['word_freq']
+#     words = words.sort_values('word_freq', ascending=False) # CHANGE TO SORT VALUES
+#     words = words.reset_index()
+#     words.columns = ['word','frequency']
+#     return words.head(n).to_json(orient='records')
 
 def main(business_id):
     df = spark.sql(
