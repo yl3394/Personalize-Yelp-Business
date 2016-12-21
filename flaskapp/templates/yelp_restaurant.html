@@ -790,7 +790,7 @@ $(document).ready(function(){
               d3.layout.cloud().size([900, 800])
                       .words(result)
                       .rotate(0)
-                      .fontSize(function(d) { return Math.sqrt(d.frequency / 2); })
+                      .fontSize(function(d) { return Math.sqrt(d.frequency); })
                       .on("end", draw)
                       .start();
 

@@ -145,9 +145,10 @@ def get_top_words(business_id, n):
     word_count_df = pd.DataFrame.from_dict(word_counts, orient='index')
     word_count_df.index = map(lambda x: x[0], word_count_df.index)
     word_count_df.columns = ['word_freq']
-    word_count_df = word_count_df.sort_values('word_freq', ascending=False) # CHANGE TO SORT VALUES
+    word_count_df = word_count_df.sort_values('word_freq', ascending=False) 
     word_count_df = word_count_df.reset_index()
     word_count_df.columns = ['word','frequency']
+    word_count_df['frequency'] = word_count_df['frequency'] / word_count_df['frequency'].max() * 50.
     return word_count_df.head(n).to_json(orient='records')
 
 
@@ -155,7 +156,7 @@ def get_top_words(business_id, n):
 #     word_freq = pd.read_json('{}wordfreq_bybusinessid_bigram.json'.format(YELP_DATA_DIR), orient='records')
 #     words = word_freq[word_freq['business_id'] == business_id].drop('business_id', axis=1).T
 #     words.columns = ['word_freq']
-#     words = words.sort_values('word_freq', ascending=False) # CHANGE TO SORT VALUES
+#     words = words.sort_values('word_freq', ascending=False) 
 #     words = words.reset_index()
 #     words.columns = ['word','frequency']
 #     return words.head(n).to_json(orient='records')
