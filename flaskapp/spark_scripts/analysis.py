@@ -174,9 +174,9 @@ def get_review_overlap(business_id, n):
     """.format(business_id=business_id)).toPandas()
     review_overlap = review_overlap.sort_values('review', ascending=False)
     review_overlap = review_overlap.head(n)
-    return json.dumps({'name':review_avg['name'].tolist(), 
-                        'good_reviews': review_avg['good_reviews'].tolist(),
-                        'bad_reviews': review_avg['bad_reviews'].tolist()})
+    return json.dumps({'name':review_overlap['name'].tolist(), 
+                        'good_reviews': review_overlap['good_reviews'].tolist(),
+                        'bad_reviews': review_overlap['bad_reviews'].tolist()})
 
 # def get_top_words(business_id, n):
 #     word_freq = pd.read_json('{}wordfreq_bybusinessid_bigram.json'.format(YELP_DATA_DIR), orient='records')
