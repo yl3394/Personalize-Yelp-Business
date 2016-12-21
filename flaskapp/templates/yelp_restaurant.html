@@ -786,7 +786,7 @@ $(document).ready(function(){
                       .domain([0,1,2,4,8,16,32,64,128,256,512])
                       .range(["#ddd", "#ccc", "#bbb", "#aaa", "#999", "#888", "#777", "#666", "#555", "#444", "#333", "#222"]);
 
-              d3.layout.cloud().size([800, 500])
+              d3.layout.cloud().size([800, 300])
                       .words(result)
                       .rotate(0)
                       .fontSize(function(d) { return d.frequency; })
