@@ -160,6 +160,10 @@ def get_top_words(business_id, n):
 
 def get_review_overlap(business_id):
     spark = yelp_lib.spark
+    review = yelp_lib.get_parq('review')
+    business = yelp_lib.get_parq('business')
+    review.registerTempTable('review')
+    business.registerTempTable('business')
     review_overlap = spark.sql("""
     select b.name, count(1) review, SUM(if(r1.stars >= 4,1,0)) as good_reviews, SUM(if(r1.stars <= 2,1,0)) as bad_reviews
     from review r1
