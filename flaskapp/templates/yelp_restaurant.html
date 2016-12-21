@@ -117,10 +117,11 @@
 </section>
 
 
+{{reviews}}
 
-<span class="yelp-review" data-review-id="8fs2_HI2FKHAl-RQsm1hYA" data-hostname="www.yelp.com">
-<span class="yelp-review" data-review-id="AjfWeinjKLxOKM2_medAnA" data-hostname="www.yelp.com">
-
+{% for review in reviews %}
+<span class="yelp-review" data-review-id="{{review}}" data-hostname="www.yelp.com">
+{% endfor %}
 <script async="async" src="https://www.yelp.com/embed/widgets.js" type="text/javascript"></script></span>
 
 
