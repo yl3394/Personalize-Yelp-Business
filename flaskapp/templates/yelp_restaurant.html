@@ -787,22 +787,22 @@ $(document).ready(function(){
                       .domain([0,1,2,3,4,5,6,10,15,20,100])
                       .range(["#ddd", "#ccc", "#bbb", "#aaa", "#999", "#888", "#777", "#666", "#555", "#444", "#333", "#222"]);
 
-              d3.layout.cloud().size([800, 600])
+              d3.layout.cloud().size([900, 800])
                       .words(result)
                       .rotate(0)
-                      .fontSize(function(d) { return Math.sqrt(d.frequency); })
+                      .fontSize(function(d) { return Math.sqrt(d.frequency / 2); })
                       .on("end", draw)
                       .start();
 
               function draw(words) {
                   d3.select("#top_words")
-                          .attr("width", 850)
-                          .attr("height", 650)
+                          .attr("width", 950)
+                          .attr("height", 850)
                           .attr("class", "wordcloud")
                           .append("g")
                           // without the transform, words words would get cutoff to the left and top, they would
                           // appear outside of the SVG area
-                          .attr("transform", "translate(320,400)")
+                          .attr("transform", "translate(320,300)")
                           .selectAll("text")
                           .data(words)
                           .enter().append("text")
