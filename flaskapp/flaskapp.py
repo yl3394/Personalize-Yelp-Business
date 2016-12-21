@@ -28,11 +28,13 @@ def build_chart(business_id):
     review_count = business_info.review_count.values[0]
     checkins = business_info.checkins.values[0]
 
+    reviews = analysis.get_reviews(business_id, n=5)
 
     return render_template('yelp_restaurant.html', business_id=business_id, business_name=business_name,
     	avg_stars = avg_stars,
     	review_count = review_count,
-    	checkins=checkins
+    	checkins=checkins,
+        reviews=reviews
     )
 
 
@@ -47,12 +49,29 @@ def analysis_review_avg(business_id):
 
 @app.route('/analysis/top_words/<business_id>')
 def analysis_top_words(business_id):
-    return analysis.get_top_words(business_id, n=30)
+    return analysis.get_top_words(business_id, n=35, kind='all')
+
+@app.route('/analysis/top_good_words/<business_id>')
+def analysis_top_good_words(business_id):
+    return analysis.get_top_words(business_id, n=35, kind='good')
+
+@app.route('/analysis/top_bad_words/<business_id>')
+def analysis_top_bad_words(business_id):
+    return analysis.get_top_words(business_id, n=35, kind='bad')
+
 
 @app.route('/analysis/checkins/<business_id>')
 def analysis_checkins(business_id):
     return analysis.get_checkins(business_id)
 
+@app.route('/analysis/reviews/<business_id>')
+def analysis_reviews(business_id):
+    return analysis.get_reviews(business_id, n=5)
+
+@app.route('/analysis/overlap/<business_id>')
+def analysis_overlap(business_id):
+    return analysis.get_review_overlap(business_id, n=15)
     
+
 if __name__ == '__main__':
     app.run()

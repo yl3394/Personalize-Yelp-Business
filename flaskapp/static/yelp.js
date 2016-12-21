@@ -14,6 +14,8 @@ function getBusinessNames(name) {
     }
     xmlHttp.open("GET", theUrl, true); // true for asynchronous 
     xmlHttp.send(null);
+
+    document.getElementById("favorites").remove();
 }
 
 function createCol(tr, title) {

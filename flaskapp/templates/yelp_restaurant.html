@@ -35,6 +35,10 @@
             stroke-width: 1.5px;
         }
 
+        table th {
+          text-align: center;
+        }
+
 
     </style>
 </head>
@@ -44,33 +48,109 @@
 <!-- Banner -->
 <section id="banner">
     <h2><strong>{{business_name}}</strong></h2>
+
 </section>
+
+
+
 <section id='analysis' class='wrapper special'>
+
+
+          <h1>Summary Stats</h1>
+          <div class="table-wrapper">
+            <table class="alt">
+              <thead>
+                <tr>
+                  <th>Total Checkins</th>
+                  <th>Average Star Rating</th>
+                  <th>Total Reviews</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>{{checkins}}</td>
+                  <td>{{avg_stars}}</td>
+                  <td>{{review_count}}</td>
+                </tr>
+
+              </tbody>
+            </table>
+          </div>
+
 
 
     <h2>Average review over time</h2>
     <p> Caption goes here</p>
-    {{business_info}}
-
-    {{checkins}}
-    {{avg_stars}}
-    {{review_count}}
-    
-    <svg id='rating_avg' width="960" height="500"><text id='rating_avg_load' font-size="45" x="0" y="100">Loading</text></svg>
-
-    <h2>Total reviews over time</h2>
-    <p> Caption goes here</p>
-    <svg id='rating_count' width="960" height="500"><text id='rating_count_load' font-size="45" x="0" y="100">Loading</text></svg>
-
-    <h2>Wordcloud</h2>
-    <svg id='top_words' width="960" height="500"><text id='top_words_load' font-size="45" x="0" y="100">Loading</text></svg>
 
 <div>
-<canvas id="myChart" width="400" height="400"></canvas></div>
+<h3 id='rating_avg_load'>Loading</h3>
+<canvas id="rating_avg" width="700" height="500"></canvas>
+</div>
+
+<div>
+    <h2>Total reviews over time</h2>
+    <p> Caption goes here</p>
+<h3 id='rating_count_load' font-size="60">Loading</h3>
+<canvas id="rating_count" width="700" height="500"></canvas>
+</div>
+
+
+<div>
+    <h2>Checkins by day</h2>
+    <p> Caption goes here</p>
+<h3 id='checkins_day_load' font-size="60">Loading</h3>
+<canvas id="checkins_day" width="700" height="500"></canvas>
+</div>
+
+<div>
+    <h2>Checkins by hour</h2>
+    <p> Caption goes here</p>
+<h3 id='checkins_hour_load' font-size="60">Loading</h3>
+<canvas id="checkins_hour" width="700" height="500"></canvas>
+</div>
+
+
+<h2>Wordcloud</h2>
+<h3 id='top_words_load' font-size="60">Loading</h3>
+<svg id='top_words' width="960" height="500"></svg>
+
+
+<h2>Top "Useful" reviews</h2>
+<div class="table-wrapper">
+  <table class="alt">
+    <thead>
+      <tr>
+        <th>Review</th>
+        <th>Stars</th>
+        <th>Usefulness</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for review in reviews %}
+      <tr>
+        <td>{{review.text}}</td>
+        <td>{{review.stars}}</td>
+        <td>{{review.usefulness}}</td>
+      </tr>
+    {% endfor %}
+
+    </tbody>
+  </table>
+</div>
+
+
+<div>
+    <h2>Review Overlap</h2>
+    <p> Caption goes here</p>
+<h3 id='overlap_load' font-size="60">Loading</h3>
+<canvas id="overlap" width="700" height="500"></canvas>
+</div>
+
+
 
     <h2>More coming soon!</h2>
+    <strong><a href='/static/index.html'>Search for another business</a></strong>
 </section>
-
 
 
 
@@ -570,201 +650,310 @@ print 'It took ' + i + ' iterations to sort the deck.';
 </footer>
 
 <!-- Scripts -->
-<script src="/static/assets/js/jquery.min.js"></script>
+<!-- <script src="/static/assets/js/jquery.min.js"></script> -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 <script src="/static/assets/js/skel.min.js"></script>
 <script src="/static/assets/js/util.js"></script>
 <!--[if lte IE 8]>
 <script src="assets/js/ie/respond.min.js"></script><![endif]-->
 <script src="/static/assets/js/main.js"></script>
 
+<script src="https://d3js.org/d3.v3.min.js"></script>
+<script src="/static/d3.layout.cloud.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/Chart.bundle.min.js"></script>
+
+
 </body>
 
 
-<script src="https://d3js.org/d3.v4.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/Chart.bundle.min.js"></script>
 
 <script>
-
 $(document).ready(function(){
+
+
       $.ajax({
-          type: "GET"
-          url: "/analysis/top_words/{{business_id}}",
+          type: 'GET',
+          url: '/analysis/review_count/{{business_id}}',
           dataType: 'json',
           success: function(result){
+            
                 var data = {
-                    labels: ["January", "February", "March", "April", "May", "June", "July"],
+                    labels: result['date'],
                     datasets: [
                         {
-                            label: "My First dataset",
-                            backgroundColor: [
-                                'rgba(255, 99, 132, 0.2)',
-                                'rgba(54, 162, 235, 0.2)',
-                                'rgba(255, 206, 86, 0.2)',
-                                'rgba(75, 192, 192, 0.2)',
-                                'rgba(153, 102, 255, 0.2)',
-                                'rgba(255, 159, 64, 0.2)'
-                            ],
-                            borderColor: [
-                                'rgba(255,99,132,1)',
-                                'rgba(54, 162, 235, 1)',
-                                'rgba(255, 206, 86, 1)',
-                                'rgba(75, 192, 192, 1)',
-                                'rgba(153, 102, 255, 1)',
-                                'rgba(255, 159, 64, 1)'
-                            ],
-                            borderWidth: 1,
-                            data: [65, 59, 80, 81, 56, 55, 40],
+                            label: "Total reviews",
+                            borderWidth: 2,
+                            fill: false,
+                            lineTension: 0.3,
+                            pointRadius: 0,
+                            borderColor: "#6699CC",
+                            data: result['review_count'],
+
                         }
                     ]
                 };
 
-              var ctx = document.getElementById("myChart");
+              var ctx = document.getElementById("rating_count");
+
                 var myBarChart = new Chart(ctx, {
+                type: 'line',
+                data: data,
+                options: {
+                  responsive: false
+                    }
+                      });
+
+                ctx.style.display = 'inline-block';
+
+                d3.select("#rating_count_load").remove();
+              }});
+
+
+
+      $.ajax({
+          type: 'GET',
+          url: '/analysis/review_avg/{{business_id}}',
+          dataType: 'json',
+          success: function(result){
+            
+                var data = {
+                    labels: result['date'],
+                    datasets: [
+                        {
+                            label: "Average Rating",
+                            borderWidth: 2,
+                            fill: false,
+                            lineTension: 0.3,
+                            pointRadius: 0,
+                            borderColor: "#6699CC",
+                            data: result['avg_rating'],
+
+                        }
+                    ]
+                };
+
+              var ctx = document.getElementById("rating_avg");
+              var myBarChart = new Chart(ctx, {
+                type: 'line',
+                data: data,
+                options: {
+                  responsive: false
+                    }
+                      });
+
+               ctx.style.display = 'inline-block';
+
+                d3.select("#rating_avg_load").remove();
+              }});
+
+
+
+      $.ajax({
+          type: 'GET',
+          url: '/analysis/checkins/{{business_id}}',
+          dataType: 'json',
+          success: function(result){
+            
+                var day_data = {
+                    labels: result['day']['day'],
+                    datasets: [
+                        {
+                            label: "Checkins",
+                            borderWidth: 2,
+                            borderColor: "#6699CC",
+                            data: result['day']['checkins'],
+
+                        }
+                    ]
+                };
+
+                var hour_data = {
+                    labels: result['hour']['hour'],
+                    datasets: [
+                        {
+                            label: "Checkins",
+                            borderWidth: 2,
+                            borderColor: "#6699CC",
+                            data: result['hour']['checkins'],
+
+                        }
+                    ]
+                };
+
+              var ctx_hour = document.getElementById("checkins_hour");
+              var ctx_day = document.getElementById("checkins_day");
+              
+              var checkinsDayChart = new Chart(ctx_day, {
                 type: 'bar',
-              data: data
-              });
-      }});
+                data: day_data,
+                options: {
+                  responsive: false
+                    }
+                      });
+
+              var checkinsDayChart = new Chart(ctx_hour, {
+                type: 'bar',
+                data: hour_data,
+                options: {
+                  responsive: false
+                    }
+                      });
+
+               ctx_day.style.display = 'inline-block';
+               ctx_hour.style.display = 'inline-block';
+
+                d3.select("#checkins_day_load").remove();
+
+                d3.select("#checkins_hour_load").remove();
+
+              }});
+
+
+
+      $.ajax({
+          type: 'GET',
+          url: '/analysis/top_words/{{business_id}}',
+          dataType: 'json',
+          success: function(result) {
+            
+
+              var color = d3.scale.linear()
+                      .domain([0,1,2,3,4,5,6,10,15,20,100])
+                      .range(["#ddd", "#ccc", "#bbb", "#aaa", "#999", "#888", "#777", "#666", "#555", "#444", "#333", "#222"]);
+
+              d3.layout.cloud().size([800, 500])
+                      .words(result)
+                      .rotate(0)
+                      .fontSize(function(d) { return Math.sqrt(d.frequency); })
+                      .on("end", draw)
+                      .start();
+
+              function draw(words) {
+                  d3.select("#top_words")
+                          .attr("width", 850)
+                          .attr("height", 550)
+                          .attr("class", "wordcloud")
+                          .append("g")
+                          // without the transform, words words would get cutoff to the left and top, they would
+                          // appear outside of the SVG area
+                          .attr("transform", "translate(320,200)")
+                          .selectAll("text")
+                          .data(words)
+                          .enter().append("text")
+                          .style("font-size", function(d) { return d.frequency + "px"; })
+                          .style("fill", function(d, i) { return color(i); })
+                          .attr("transform", function(d) {
+                              return "translate(" + [d.x, d.y] + ")rotate(" + d.rotate + ")";
+                          })
+                          .text(function(d) { return d.word; });
+              }
+
+                d3.select("#top_words_load").remove();
+
+               }});
+
+    
+
+          $.ajax({
+          type: 'GET',
+          url: '/analysis/overlap/{{business_id}}',
+          dataType: 'json',
+          success: function(result){
+            
+                var data = {
+                    labels: result['name'],
+                    datasets: [
+                        {
+                            label: "Good Reviews",
+                            backgroundColor: "rgba(179,181,198,0.2)",
+                            borderColor: "rgba(179,181,198,1)",
+                            pointBackgroundColor: "rgba(179,181,198,1)",
+                            pointBorderColor: "#fff",
+                            pointHoverBackgroundColor: "#fff",
+                            pointHoverBorderColor: "rgba(179,181,198,1)",
+                            borderWidth: 2,
+                            data: result['good_reviews'],
+
+                        },
+                        {
+                            label: "Bad Reviews",
+                            borderWidth: 2,
+                            backgroundColor: "rgba(255,99,132,0.2)",
+                            borderColor: "rgba(255,99,132,1)",
+                            pointBackgroundColor: "rgba(255,99,132,1)",
+                            pointBorderColor: "#fff",
+                            pointHoverBackgroundColor: "#fff",
+                            pointHoverBorderColor: "rgba(255,99,132,1)",
+                            data: result['bad_reviews'],
+
+                        }
+                    ]
+                };
+
+
+              var ctx = document.getElementById("overlap");
+              
+              var overlapChart = new Chart(ctx, {
+                type: 'radar',
+                data: data,
+                options: {
+                  responsive: false
+                    }
+                      });
+
+               ctx.style.display = 'inline-block';
+
+
+                d3.select("#overlap_load").remove();
+
+              }});
+
+            
   });
 
 
-
-
-
 </script>
-
-
-
+<!-- 
 <script>
 
-    var svg = d3.select("#rating_avg"),
-            margin = {top: 20, right: 20, bottom: 30, left: 50},
-            width = +svg.attr("width") - margin.left - margin.right,
-            height = +svg.attr("height") - margin.top - margin.bottom,
-            chart1 = svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+    var frequency_list = [{"text":"study","size":40},{"text":"motion","size":15},{"text":"forces","size":10},{"text":"electricity","size":15},{"text":"movement","size":10},{"text":"relation","size":5},{"text":"things","size":10},{"text":"force","size":5},{"text":"ad","size":5},{"text":"energy","size":85},{"text":"living","size":5},{"text":"nonliving","size":5},{"text":"laws","size":15},{"text":"speed","size":45},{"text":"velocity","size":30},{"text":"define","size":5},{"text":"constraints","size":5},{"text":"universe","size":10},{"text":"physics","size":120},{"text":"describing","size":5},{"text":"matter","size":90},{"text":"physics-the","size":5},{"text":"world","size":10},{"text":"works","size":10},{"text":"science","size":70},{"text":"interactions","size":30},{"text":"studies","size":5},{"text":"properties","size":45},{"text":"nature","size":40},{"text":"branch","size":30},{"text":"concerned","size":25},{"text":"source","size":40},{"text":"google","size":10},{"text":"defintions","size":5},{"text":"two","size":15},{"text":"grouped","size":15},{"text":"traditional","size":15},{"text":"fields","size":15},{"text":"acoustics","size":15},{"text":"optics","size":15},{"text":"mechanics","size":20},{"text":"thermodynamics","size":15},{"text":"electromagnetism","size":15},{"text":"modern","size":15},{"text":"extensions","size":15},{"text":"thefreedictionary","size":15},{"text":"interaction","size":15},{"text":"org","size":25},{"text":"answers","size":5},{"text":"natural","size":15},{"text":"objects","size":5},{"text":"treats","size":10},{"text":"acting","size":5},{"text":"department","size":5},{"text":"gravitation","size":5},{"text":"heat","size":10},{"text":"light","size":10},{"text":"magnetism","size":10},{"text":"modify","size":5},{"text":"general","size":10},{"text":"bodies","size":5},{"text":"philosophy","size":5},{"text":"brainyquote","size":5},{"text":"words","size":5},{"text":"ph","size":5},{"text":"html","size":5},{"text":"lrl","size":5},{"text":"zgzmeylfwuy","size":5},{"text":"subject","size":5},{"text":"distinguished","size":5},{"text":"chemistry","size":5},{"text":"biology","size":5},{"text":"includes","size":5},{"text":"radiation","size":5},{"text":"sound","size":5},{"text":"structure","size":5},{"text":"atoms","size":5},{"text":"including","size":10},{"text":"atomic","size":10},{"text":"nuclear","size":10},{"text":"cryogenics","size":10},{"text":"solid-state","size":10},{"text":"particle","size":10},{"text":"plasma","size":10},{"text":"deals","size":5},{"text":"merriam-webster","size":5},{"text":"dictionary","size":10},{"text":"analysis","size":5},{"text":"conducted","size":5},{"text":"order","size":5},{"text":"understand","size":5},{"text":"behaves","size":5},{"text":"en","size":5},{"text":"wikipedia","size":5},{"text":"wiki","size":5},{"text":"physics-","size":5},{"text":"physical","size":5},{"text":"behaviour","size":5},{"text":"collinsdictionary","size":5},{"text":"english","size":5},{"text":"time","size":35},{"text":"distance","size":35},{"text":"wheels","size":5},{"text":"revelations","size":5},{"text":"minute","size":5},{"text":"acceleration","size":20},{"text":"torque","size":5},{"text":"wheel","size":5},{"text":"rotations","size":5},{"text":"resistance","size":5},{"text":"momentum","size":5},{"text":"measure","size":10},{"text":"direction","size":10},{"text":"car","size":5},{"text":"add","size":5},{"text":"traveled","size":5},{"text":"weight","size":5},{"text":"electrical","size":5},{"text":"power","size":5}];
 
-    var parseTime = d3.timeParse("%Y-%m-%d");
 
-    var x = d3.scaleTime()
-            .rangeRound([0, width]);
+    var color = d3.scale.linear()
+            .domain([0,1,2,3,4,5,6,10,15,20,100])
+            .range(["#ddd", "#ccc", "#bbb", "#aaa", "#999", "#888", "#777", "#666", "#555", "#444", "#333", "#222"]);
 
-    var y = d3.scaleLinear()
-            .rangeRound([height, 0]);
+    d3.layout.cloud().size([800, 300])
+            .words(frequency_list)
+            .rotate(0)
+            .fontSize(function(d) { return d.size; })
+            .on("end", draw)
+            .start();
 
-    var line1 = d3.line()
-            .x(function (d) {
-                return x(d.date);
-            })
-            .y(function (d) {
-                return y(d.avg_rating);
-            });
-
-    d3.tsv("/analysis/review_avg/{{business_id}}", function (d) {
-        d.date = parseTime(d.date);
-        d.avg_rating = +d.avg_rating;
-        return d;
-    }, function (error, data) {
-        if (error) throw error;
-
-        x.domain(d3.extent(data, function (d) {
-            return d.date;
-        }));
-        y.domain(d3.extent(data, function (d) {
-            return d.avg_rating;
-        }));
-
-        chart1.append("g")
-                .attr("class", "axis axis--x")
-                .attr("transform", "translate(0," + height + ")")
-                .call(d3.axisBottom(x));
-
-        chart1.append("g")
-                .attr("class", "axis axis--y")
-                .call(d3.axisLeft(y))
-                .append("text")
-                .attr("fill", "#000")
-                .attr("transform", "rotate(-90)")
-                .attr("y", 6)
-                .attr("dy", "0.71em")
-                .style("text-anchor", "end")
-                .text("Average Rating");
-
-        chart1.append("path")
-                .datum(data)
-                .attr("class", "line")
-                .attr("d", line1);
-
-        d3.select("#rating_avg_load").remove();
-    });
-
+    function draw(words) {
+        d3.select("#top_words")
+                .attr("width", 850)
+                .attr("height", 350)
+                .attr("class", "wordcloud")
+                .append("g")
+                // without the transform, words words would get cutoff to the left and top, they would
+                // appear outside of the SVG area
+                .attr("transform", "translate(320,200)")
+                .selectAll("text")
+                .data(words)
+                .enter().append("text")
+                .style("font-size", function(d) { return d.size + "px"; })
+                .style("fill", function(d, i) { return color(i); })
+                .attr("transform", function(d) {
+                    return "translate(" + [d.x, d.y] + ")rotate(" + d.rotate + ")";
+                })
+                .text(function(d) { return d.text; });
+    }
 </script>
 
 
-<script>
-
-    var svg = d3.select("#rating_count"),
-            margin = {top: 20, right: 20, bottom: 30, left: 50},
-            width = +svg.attr("width") - margin.left - margin.right,
-            height = +svg.attr("height") - margin.top - margin.bottom,
-            chart2 = svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
-    var parseTime = d3.timeParse("%Y-%m-%d");
-
-    var x = d3.scaleTime()
-            .rangeRound([0, width]);
-
-    var y = d3.scaleLinear()
-            .rangeRound([height, 0]);
-
-    var line2 = d3.line()
-            .x(function (d) {
-                return x(d.date);
-            })
-            .y(function (d) {
-                return y(d.review_count);
-            });
-
-    d3.tsv("/analysis/review_count/{{business_id}}", function (d) {
-        d.date = parseTime(d.date);
-        d.review_count = +d.review_count;
-        return d;
-    }, function (error, data) {
-        if (error) throw error;
-
-        x.domain(d3.extent(data, function (d) {
-            return d.date;
-        }));
-        y.domain(d3.extent(data, function (d) {
-            return d.review_count;
-        }));
-
-        chart2.append("g")
-                .attr("class", "axis axis--x")
-                .attr("transform", "translate(0," + height + ")")
-                .call(d3.axisBottom(x));
-
-        chart2.append("g")
-                .attr("class", "axis axis--y")
-                .call(d3.axisLeft(y))
-                .append("text")
-                .attr("fill", "#000")
-                .attr("transform", "rotate(-90)")
-                .attr("y", 6)
-                .attr("dy", "0.71em")
-                .style("text-anchor", "end")
-                .text("Total ratings");
-
-        chart2.append("path")
-                .datum(data)
-                .attr("class", "line")
-                .attr("d", line2);
-
-        d3.select("#rating_count_load").remove();
-    });
-
-</script>
-
-
-
+ -->
 <!--
 
 <script>
