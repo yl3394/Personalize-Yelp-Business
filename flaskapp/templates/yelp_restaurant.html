@@ -113,16 +113,36 @@
 <h3 id='top_words_load' font-size="60">Loading</h3>
 <svg id='top_words' width="960" height="500"></svg>
 
+
+<h1>Top "Useful" reviews</h1>
+<div class="table-wrapper">
+  <table class="alt">
+    <thead>
+      <tr>
+        <th>Review</th>
+        <th>Stars</th>
+        <th>Usefulness</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for review in reviews %}
+      <tr>
+        <td>{{{review.text}}</td>
+        <td>{{review.stars}}</td>
+        <td>{{review.usefulness}}</td>
+      </tr>
+    {% endfor %}
+
+    </tbody>
+  </table>
+</div>
+
+
     <h2>More coming soon!</h2>
 </section>
 
 
 
-{% for review in reviews %}
-<p>{{review.text}}
-{{review.usefulness}}
-{{review.stars}}</p>
-{% endfor %}
 
 
 <style>
