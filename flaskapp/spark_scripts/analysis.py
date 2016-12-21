@@ -127,6 +127,10 @@ def get_checkins(business_id):
                         })
 
 
+
+
+
+
 def get_reviews(business_id, n):
     spark = yelp_lib.spark
     review = yelp_lib.get_parq('review')
@@ -139,7 +143,7 @@ def get_top_words(business_id, n, kind='all'):
     spark = yelp_lib.spark
     review = yelp_lib.get_parq('review')
     business_df = review.filter(review['business_id'] == business_id)
-    
+
     if kind == 'good':
         business_df = business_df.filter(business_df['stars'] >= 4)
     elif kind == 'bad':
@@ -161,6 +165,22 @@ def get_top_words(business_id, n, kind='all'):
     word_count_df.columns = ['word','frequency']
     word_count_df['frequency'] = word_count_df['frequency'] / word_count_df['frequency'].max() * 60.
     return word_count_df.head(n).to_json(orient='records')
+
+
+def tfidf(business_id):
+    sentenceData = spark.createDataFrame([
+    (1, "Hi I heard about Spark"),
+    (2, "I wish Java could use case classes"),
+    (3, "Logistic regression models are neat")
+], ["id", "sentence"])
+
+
+    tokenizer = Tokenizer(inputCol="sentence", outputCol="words")
+    df_wordData = tokenizer.transform(sentenceData)
+    cv = CountVectorizer(inputCol="words", outputCol="features")
+    model = cv.fit(df_word)
+    model.transform(df_word)
+
 
 def get_review_overlap(business_id, n):
     spark = yelp_lib.spark
