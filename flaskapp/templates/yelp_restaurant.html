@@ -611,7 +611,7 @@ $(document).ready(function(){
                             pointRadius: 0,
                             borderColor: "rgba(75,192,192,1)",
                             data: result['review_count'],
-                            responsive: false
+
                         }
                     ]
                 };
@@ -619,10 +619,13 @@ $(document).ready(function(){
               var ctx = document.getElementById("rating_count");
                 ctx.canvas.width = 400;
                 ctx.canvas.height = 400;
-                
+
                 var myBarChart = new Chart(ctx, {
                 type: 'line',
-                data: data
+                data: data,
+                options: {
+                  responsive: false
+                    }
                       });
 
                 d3.select("#rating_count_load").remove();
@@ -648,15 +651,18 @@ $(document).ready(function(){
                             pointRadius: 0,
                             borderColor: "rgba(75,192,192,1)",
                             data: result['avg_rating'],
-                            responsive: false
+
                         }
                     ]
                 };
 
               var ctx = document.getElementById("rating_avg");
-                var myBarChart = new Chart(ctx, {
+              var myBarChart = new Chart(ctx, {
                 type: 'line',
-                data: data
+                data: data,
+                options: {
+                  responsive: false
+                    }
                       });
 
                 d3.select("#rating_avg_load").remove();
