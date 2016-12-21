@@ -32,7 +32,7 @@ def get_review_count_by_date(business_id):
         """select * from review where business_id = '{business_id}'""".format(business_id=business_id)).toPandas()
     review_count = review_count_by_date(df)
     return json.dumps({'date':review_count['date'].tolist(), 
-                        'avg_rating': review_count['review_count'].tolist()})
+                        'review_count': review_count['review_count'].tolist()})
 
 def review_avg_by_date(df):
     df['date'] = pd.to_datetime(df['date'])

@@ -45,29 +45,31 @@
 <section id="banner">
     <h2><strong>{{business_name}}</strong></h2>
 </section>
+
+
+
 <section id='analysis' class='wrapper special'>
-
-
-    <h2>Average review over time</h2>
-    <p> Caption goes here</p>
     {{business_info}}
 
     {{checkins}}
     {{avg_stars}}
     {{review_count}}
-    
-    <svg id='rating_avg' width="960" height="500"><text id='rating_avg_load' font-size="45" x="0" y="100">Loading</text></svg>
 
+
+    <h2>Average review over time</h2>
+    <p> Caption goes here</p>
+
+    
+
+<div><canvas id="rating_avg" width="400" height="400"><text id='rating_avg_load' font-size="45" x="0" y="100">Loading</text></canvas></div>
     <h2>Total reviews over time</h2>
     <p> Caption goes here</p>
-    <svg id='rating_count' width="960" height="500"><text id='rating_count_load' font-size="45" x="0" y="100">Loading</text></svg>
+
+<div><canvas id="rating_count" width="400" height="400"><text id='rating_count_load' font-size="45" x="0" y="100">Loading</text></canvas></div>
+
 
     <h2>Wordcloud</h2>
     <svg id='top_words' width="960" height="500"><text id='top_words_load' font-size="45" x="0" y="100">Loading</text></svg>
-
-<div><canvas id="myChart" width="400" height="400"></canvas></div>
-
-<div><canvas id="rating_avg_chart" width="400" height="400"></canvas></div>
 
     <h2>More coming soon!</h2>
 </section>
@@ -588,45 +590,80 @@ print 'It took ' + i + ' iterations to sort the deck.';
 <script>
 $(document).ready(function(){
 
-      // $.ajax({
-      //     type: 'GET',
-      //     url: 'http://ec2-52-201-219-76.compute-1.amazonaws.com/analysis/top_words/{{business_id}}',
-      //     dataType: 'json',
-      //     success: function(result){
+      $.ajax({
+          type: 'GET',
+          url: 'http://ec2-52-201-219-76.compute-1.amazonaws.com/analysis/top_words/{{business_id}}',
+          dataType: 'json',
+          success: function(result){
 
-      //           var data = {
-      //               labels: ["January", "February", "March", "April", "May", "June", "July"],
-      //               datasets: [
-      //                   {
-      //                       label: "My First dataset",
-      //                       backgroundColor: [
-      //                           'rgba(255, 99, 132, 0.2)',
-      //                           'rgba(54, 162, 235, 0.2)',
-      //                           'rgba(255, 206, 86, 0.2)',
-      //                           'rgba(75, 192, 192, 0.2)',
-      //                           'rgba(153, 102, 255, 0.2)',
-      //                           'rgba(255, 159, 64, 0.2)'
-      //                       ],
-      //                       borderColor: [
-      //                           'rgba(255,99,132,1)',
-      //                           'rgba(54, 162, 235, 1)',
-      //                           'rgba(255, 206, 86, 1)',
-      //                           'rgba(75, 192, 192, 1)',
-      //                           'rgba(153, 102, 255, 1)',
-      //                           'rgba(255, 159, 64, 1)'
-      //                       ],
-      //                       borderWidth: 1,
-      //                       data: [65, 59, 80, 81, 56, 55, 40],
-      //                   }
-      //               ]
-      //           };
+                var data = {
+                    labels: ["January", "February", "March", "April", "May", "June", "July"],
+                    datasets: [
+                        {
+                            label: "My First dataset",
+                            backgroundColor: [
+                                'rgba(255, 99, 132, 0.2)',
+                                'rgba(54, 162, 235, 0.2)',
+                                'rgba(255, 206, 86, 0.2)',
+                                'rgba(75, 192, 192, 0.2)',
+                                'rgba(153, 102, 255, 0.2)',
+                                'rgba(255, 159, 64, 0.2)'
+                            ],
+                            borderColor: [
+                                'rgba(255,99,132,1)',
+                                'rgba(54, 162, 235, 1)',
+                                'rgba(255, 206, 86, 1)',
+                                'rgba(75, 192, 192, 1)',
+                                'rgba(153, 102, 255, 1)',
+                                'rgba(255, 159, 64, 1)'
+                            ],
+                            borderWidth: 1,
+                            data: [65, 59, 80, 81, 56, 55, 40],
+                        }
+                    ]
+                };
 
-      //         var ctx = document.getElementById("myChart");
-      //           var myBarChart = new Chart(ctx, {
-      //           type: 'bar',
-      //           data: data
-      //                 });
-      //         }});
+              var ctx = document.getElementById("myChart");
+                var myBarChart = new Chart(ctx, {
+                type: 'bar',
+                data: data
+                      });
+
+                d3.select("#rating_count_load").remove();
+              }});
+
+      $.ajax({
+          type: 'GET',
+          url: 'http://ec2-52-201-219-76.compute-1.amazonaws.com/analysis/review_count/{{business_id}}',
+          dataType: 'json',
+          success: function(result){
+            console.log(result);
+            
+                var data = {
+                    labels: result['date'],
+                    datasets: [
+                        {
+                            label: "Total reviews",
+                            borderWidth: 2,
+                            fill: false,
+                            lineTension: 0.3,
+                            pointRadius: 0,
+                            borderColor: "rgba(75,192,192,1)",
+                            data: result['review_count'],
+                        }
+                    ]
+                };
+
+              var ctx = document.getElementById("rating_count");
+                var myBarChart = new Chart(ctx, {
+                type: 'line',
+                data: data
+                      });
+
+                d3.select("#rating_avg_load").remove();
+              }});
+
+
 
       $.ajax({
           type: 'GET',
@@ -650,144 +687,20 @@ $(document).ready(function(){
                     ]
                 };
 
-              var ctx = document.getElementById("rating_avg_chart");
+              var ctx = document.getElementById("rating_avg");
                 var myBarChart = new Chart(ctx, {
                 type: 'line',
                 data: data
                       });
+
+                d3.select("#rating_avg_load").remove();
               }});
+
+            
   });
 </script>
 
 
-<script>
-
-    var svg = d3.select("#rating_avg"),
-            margin = {top: 20, right: 20, bottom: 30, left: 50},
-            width = +svg.attr("width") - margin.left - margin.right,
-            height = +svg.attr("height") - margin.top - margin.bottom,
-            chart1 = svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
-    var parseTime = d3.timeParse("%Y-%m-%d");
-
-    var x = d3.scaleTime()
-            .rangeRound([0, width]);
-
-    var y = d3.scaleLinear()
-            .rangeRound([height, 0]);
-
-    var line1 = d3.line()
-            .x(function (d) {
-                return x(d.date);
-            })
-            .y(function (d) {
-                return y(d.avg_rating);
-            });
-
-    d3.tsv("/analysis/review_avg/{{business_id}}", function (d) {
-        d.date = parseTime(d.date);
-        d.avg_rating = +d.avg_rating;
-        return d;
-    }, function (error, data) {
-        if (error) throw error;
-
-        x.domain(d3.extent(data, function (d) {
-            return d.date;
-        }));
-        y.domain(d3.extent(data, function (d) {
-            return d.avg_rating;
-        }));
-
-        chart1.append("g")
-                .attr("class", "axis axis--x")
-                .attr("transform", "translate(0," + height + ")")
-                .call(d3.axisBottom(x));
-
-        chart1.append("g")
-                .attr("class", "axis axis--y")
-                .call(d3.axisLeft(y))
-                .append("text")
-                .attr("fill", "#000")
-                .attr("transform", "rotate(-90)")
-                .attr("y", 6)
-                .attr("dy", "0.71em")
-                .style("text-anchor", "end")
-                .text("Average Rating");
-
-        chart1.append("path")
-                .datum(data)
-                .attr("class", "line")
-                .attr("d", line1);
-
-        d3.select("#rating_avg_load").remove();
-    });
-
-</script>
-
-
-<script>
-
-    var svg = d3.select("#rating_count"),
-            margin = {top: 20, right: 20, bottom: 30, left: 50},
-            width = +svg.attr("width") - margin.left - margin.right,
-            height = +svg.attr("height") - margin.top - margin.bottom,
-            chart2 = svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
-    var parseTime = d3.timeParse("%Y-%m-%d");
-
-    var x = d3.scaleTime()
-            .rangeRound([0, width]);
-
-    var y = d3.scaleLinear()
-            .rangeRound([height, 0]);
-
-    var line2 = d3.line()
-            .x(function (d) {
-                return x(d.date);
-            })
-            .y(function (d) {
-                return y(d.review_count);
-            });
-
-    d3.tsv("/analysis/review_count/{{business_id}}", function (d) {
-        d.date = parseTime(d.date);
-        d.review_count = +d.review_count;
-        return d;
-    }, function (error, data) {
-        if (error) throw error;
-
-        x.domain(d3.extent(data, function (d) {
-            return d.date;
-        }));
-        y.domain(d3.extent(data, function (d) {
-            return d.review_count;
-        }));
-
-        chart2.append("g")
-                .attr("class", "axis axis--x")
-                .attr("transform", "translate(0," + height + ")")
-                .call(d3.axisBottom(x));
-
-        chart2.append("g")
-                .attr("class", "axis axis--y")
-                .call(d3.axisLeft(y))
-                .append("text")
-                .attr("fill", "#000")
-                .attr("transform", "rotate(-90)")
-                .attr("y", 6)
-                .attr("dy", "0.71em")
-                .style("text-anchor", "end")
-                .text("Total ratings");
-
-        chart2.append("path")
-                .datum(data)
-                .attr("class", "line")
-                .attr("d", line2);
-
-        d3.select("#rating_count_load").remove();
-    });
-
-</script>
 
 
 
