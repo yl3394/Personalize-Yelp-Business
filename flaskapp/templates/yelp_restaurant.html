@@ -35,9 +35,7 @@
             stroke-width: 1.5px;
         }
 
-        canvas {
-          display: inline-block;
-        }
+
 
     </style>
 </head>
@@ -64,14 +62,14 @@
 
 <div>
 <h3 id='rating_avg_load'>Loading</h3>
-<canvas id="rating_avg" width="700" height="500" display="inline-block"></canvas>
+<canvas id="rating_avg" width="700" height="500"></canvas>
 </div>
 
 <div>
     <h2>Total reviews over time</h2>
     <p> Caption goes here</p>
 <h3 id='rating_count_load' font-size="60">Loading</h3>
-<canvas id="rating_count" width="700" height="500" display="inline-block"></canvas>
+<canvas id="rating_count" width="700" height="500"></canvas>
 </div>
 
     <h2>Wordcloud</h2>
@@ -629,6 +627,8 @@ $(document).ready(function(){
                     }
                       });
 
+                ctx.style.display = 'inline-block';
+
                 d3.select("#rating_count_load").remove();
               }});
 
@@ -665,6 +665,8 @@ $(document).ready(function(){
                   responsive: false
                     }
                       });
+
+               ctx.style.display = 'inline-block';
 
                 d3.select("#rating_avg_load").remove();
               }});
