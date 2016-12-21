@@ -50,11 +50,35 @@
 
 
 <section id='analysis' class='wrapper special'>
-    {{business_info}}
 
-    {{checkins}}
-    {{avg_stars}}
-    {{review_count}}
+
+          <h4>Summary Stats</h4>
+          <div class="table-wrapper">
+            <table>
+              <thead>
+                <tr>
+                  <th>Total Checkins</th>
+                  <th>Average Star Rating</th>
+                  <th>Total Reviews</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>{{checkins}}</td>
+                  <td>{{avg_stars}}</td>
+                  <td>{{review_count}}</td>
+                </tr>
+
+              </tbody>
+              <tfoot>
+                <tr>
+                  <td colspan="2"></td>
+                  <td>100.00</td>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+
 
 
     <h2>Average review over time</h2>
@@ -639,7 +663,6 @@ $(document).ready(function(){
           url: 'http://ec2-52-201-219-76.compute-1.amazonaws.com/analysis/review_avg/{{business_id}}',
           dataType: 'json',
           success: function(result){
-            console.log(result);
             
                 var data = {
                     labels: result['date'],
