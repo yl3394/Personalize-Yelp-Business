@@ -61,7 +61,7 @@ def analysis_reviews(business_id):
 
 @app.route('/analysis/overlap/<business_id>')
 def analysis_overlap(business_id):
-    return analysis.get_review_overlap(business_id)
+    return analysis.get_review_overlap(business_id, n=10)
     
 
 if __name__ == '__main__':

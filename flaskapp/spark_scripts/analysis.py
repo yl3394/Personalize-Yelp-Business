@@ -158,7 +158,7 @@ def get_top_words(business_id, n):
     word_count_df['frequency'] = word_count_df['frequency'] / word_count_df['frequency'].max() * 60.
     return word_count_df.head(n).to_json(orient='records')
 
-def get_review_overlap(business_id):
+def get_review_overlap(business_id, n):
     spark = yelp_lib.spark
     review = yelp_lib.get_parq('review')
     business = yelp_lib.get_parq('business')
@@ -173,7 +173,10 @@ def get_review_overlap(business_id):
     group by b.name
     """.format(business_id=business_id)).toPandas()
     review_overlap = review_overlap.sort_values('review', ascending=False)
-    return review_overlap.head(20).to_json(orient='records')
+    review_overlap = review_overlap.head(n)
+    return json.dumps({'name':review_avg['name'].tolist(), 
+                        'good_reviews': review_avg['good_reviews'].tolist(),
+                        'bad_reviews': review_avg['bad_reviews'].tolist()})
 
 # def get_top_words(business_id, n):
 #     word_freq = pd.read_json('{}wordfreq_bybusinessid_bigram.json'.format(YELP_DATA_DIR), orient='records')

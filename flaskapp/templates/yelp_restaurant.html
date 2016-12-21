@@ -139,6 +139,15 @@
 </div>
 
 
+<div>
+    <h2>Review Overlap</h2>
+    <p> Caption goes here</p>
+<h3 id='overlap_load' font-size="60">Loading</h3>
+<canvas id="overlap" width="700" height="500"></canvas>
+</div>
+
+
+
     <h2>More coming soon!</h2>
     <strong><a href='/static/index.html'>Search for another business</a></strong>
 </section>
@@ -844,6 +853,51 @@ $(document).ready(function(){
 
                }});
 
+    
+
+          $.ajax({
+          type: 'GET',
+          url: '/analysis/overlap/{{business_id}}',
+          dataType: 'json',
+          success: function(result){
+            
+                var data = {
+                    labels: result['name'],
+                    datasets: [
+                        {
+                            label: "Good Reviews",
+                            borderWidth: 2,
+                            borderColor: "#6699CC",
+                            data: result['good_reviews'],
+
+                        },
+                        {
+                            label: "Bad Reviews",
+                            borderWidth: 2,
+                            borderColor: "#6699CC",
+                            data: result['bad_reviews'],
+
+                        }
+                    ]
+                };
+
+
+              var ctx = document.getElementById("overlap");
+              
+              var overlapChart = new Chart(ctx, {
+                type: 'radar',
+                data: data,
+                options: {
+                  responsive: false
+                    }
+                      });
+
+               ctx.style.display = 'inline-block';
+
+
+                d3.select("#overlap_load").remove();
+
+              }});
 
             
   });
