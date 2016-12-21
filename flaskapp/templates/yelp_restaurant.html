@@ -61,11 +61,14 @@
 
     
 
-<div><canvas id="rating_avg" width="400" height="400"><text id='rating_avg_load' font-size="45" x="0" y="100">Loading</text></canvas></div>
+<div width="400" height="400"><canvas id="rating_avg"></canvas>
+<text id='rating_avg_load' font-size="45" x="0" y="100">Loading</text>
+</div>
     <h2>Total reviews over time</h2>
     <p> Caption goes here</p>
 
-<div><canvas id="rating_count" width="400" height="400"><text id='rating_count_load' font-size="45" x="0" y="100">Loading</text></canvas></div>
+<div width="400" height="400"><canvas id="rating_count"></canvas>
+<text id='rating_count_load' font-size="45" x="0" y="100">Loading</text></div>
 
 
     <h2>Wordcloud</h2>
@@ -590,54 +593,12 @@ print 'It took ' + i + ' iterations to sort the deck.';
 <script>
 $(document).ready(function(){
 
-      $.ajax({
-          type: 'GET',
-          url: 'http://ec2-52-201-219-76.compute-1.amazonaws.com/analysis/top_words/{{business_id}}',
-          dataType: 'json',
-          success: function(result){
-
-                var data = {
-                    labels: ["January", "February", "March", "April", "May", "June", "July"],
-                    datasets: [
-                        {
-                            label: "My First dataset",
-                            backgroundColor: [
-                                'rgba(255, 99, 132, 0.2)',
-                                'rgba(54, 162, 235, 0.2)',
-                                'rgba(255, 206, 86, 0.2)',
-                                'rgba(75, 192, 192, 0.2)',
-                                'rgba(153, 102, 255, 0.2)',
-                                'rgba(255, 159, 64, 0.2)'
-                            ],
-                            borderColor: [
-                                'rgba(255,99,132,1)',
-                                'rgba(54, 162, 235, 1)',
-                                'rgba(255, 206, 86, 1)',
-                                'rgba(75, 192, 192, 1)',
-                                'rgba(153, 102, 255, 1)',
-                                'rgba(255, 159, 64, 1)'
-                            ],
-                            borderWidth: 1,
-                            data: [65, 59, 80, 81, 56, 55, 40],
-                        }
-                    ]
-                };
-
-              var ctx = document.getElementById("myChart");
-                var myBarChart = new Chart(ctx, {
-                type: 'bar',
-                data: data
-                      });
-
-                d3.select("#rating_count_load").remove();
-              }});
 
       $.ajax({
           type: 'GET',
           url: 'http://ec2-52-201-219-76.compute-1.amazonaws.com/analysis/review_count/{{business_id}}',
           dataType: 'json',
           success: function(result){
-            console.log(result);
             
                 var data = {
                     labels: result['date'],
@@ -660,7 +621,7 @@ $(document).ready(function(){
                 data: data
                       });
 
-                d3.select("#rating_avg_load").remove();
+                d3.select("#rating_count_load").remove();
               }});
 
 
