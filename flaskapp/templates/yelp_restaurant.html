@@ -120,9 +120,10 @@
 {{reviews}}
 
 {% for review in reviews %}
-<span class="yelp-review" data-review-id="{{review}}" data-hostname="www.yelp.com">
+<p>{{review.text}}
+{{review.usefulness}}
+{{review.stars}}</p>
 {% endfor %}
-<script async="async" src="https://www.yelp.com/embed/widgets.js" type="text/javascript"></script></span>
 
 
 <style>

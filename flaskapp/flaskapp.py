@@ -29,7 +29,6 @@ def build_chart(business_id):
     checkins = business_info.checkins.values[0]
 
     reviews = analysis.get_reviews(business_id, n=5)
-    reviews = reviews['review_id'].tolist()
 
     return render_template('yelp_restaurant.html', business_id=business_id, business_name=business_name,
     	avg_stars = avg_stars,

@@ -133,7 +133,7 @@ def get_reviews(business_id, n):
     business_df = review.filter(review['business_id'] == business_id).toPandas()
     business_df['usefulness'] = business_df['votes'].apply(lambda x: x[1])
     business_df = business_df.sort_values('usefulness', ascending=False)
-    return business_df.head(n)
+    return business_df.head(n).to_json(orient='records')
 
 def get_top_words(business_id, n):
     spark = yelp_lib.spark
