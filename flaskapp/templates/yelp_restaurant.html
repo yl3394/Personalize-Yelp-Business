@@ -866,15 +866,25 @@ $(document).ready(function(){
                     datasets: [
                         {
                             label: "Good Reviews",
+                            backgroundColor: "rgba(179,181,198,0.2)",
+                            borderColor: "rgba(179,181,198,1)",
+                            pointBackgroundColor: "rgba(179,181,198,1)",
+                            pointBorderColor: "#fff",
+                            pointHoverBackgroundColor: "#fff",
+                            pointHoverBorderColor: "rgba(179,181,198,1)",
                             borderWidth: 2,
-                            borderColor: "#6699CC",
                             data: result['good_reviews'],
 
                         },
                         {
                             label: "Bad Reviews",
                             borderWidth: 2,
-                            borderColor: "#6699CC",
+                            backgroundColor: "rgba(255,99,132,0.2)",
+                            borderColor: "rgba(255,99,132,1)",
+                            pointBackgroundColor: "rgba(255,99,132,1)",
+                            pointBorderColor: "#fff",
+                            pointHoverBackgroundColor: "#fff",
+                            pointHoverBorderColor: "rgba(255,99,132,1)",
                             data: result['bad_reviews'],
 
                         }
