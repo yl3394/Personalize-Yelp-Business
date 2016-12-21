@@ -18,6 +18,7 @@ def review_count_by_date(df):
           )
     df = df.cumsum()
     df = df.ix['2015-01-01':]
+    df.index = df.index.map(lambda x: str(x.date()))
     df = df.reset_index()
     df.columns = ['date', 'review_count']
     return df
