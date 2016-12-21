@@ -58,6 +58,11 @@ def analysis_checkins(business_id):
 @app.route('/analysis/reviews/<business_id>')
 def analysis_reviews(business_id):
     return analysis.get_reviews(business_id, n=5)
+
+@app.route('/analysis/overlap/<business_id>')
+def analysis_overlap(business_id):
+    return analysis.get_review_overlap(business_id)
     
+
 if __name__ == '__main__':
     app.run()
