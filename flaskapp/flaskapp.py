@@ -49,15 +49,15 @@ def analysis_review_avg(business_id):
 
 @app.route('/analysis/top_words/<business_id>')
 def analysis_top_words(business_id):
-    return analysis.get_top_words(business_id, n=35)
+    return analysis.get_top_words(business_id, n=35, kind='all')
 
 @app.route('/analysis/top_good_words/<business_id>')
 def analysis_top_good_words(business_id):
-    return analysis.get_top_words(business_id, n=35)
+    return analysis.get_top_words(business_id, n=35, kind='good')
 
 @app.route('/analysis/top_bad_words/<business_id>')
 def analysis_top_bad_words(business_id):
-    return analysis.get_top_words(business_id, n=35)
+    return analysis.get_top_words(business_id, n=35, kind='bad')
 
 
 @app.route('/analysis/checkins/<business_id>')

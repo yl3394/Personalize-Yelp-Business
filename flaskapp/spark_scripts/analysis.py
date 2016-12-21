@@ -142,7 +142,7 @@ def get_top_words(business_id, n, kind='all'):
     if kind == 'good':
         business_df = business_df.filter(business_df['stars'] >= 4)
     elif kind == 'bad':
-        business_df = business_df.filter(business_df['stars'] < 4)
+        business_df = business_df.filter(business_df['stars'] < 3)
     # tokenizer = Tokenizer(inputCol="text", outputCol="words")
     regexTokenizer = RegexTokenizer(inputCol="text", outputCol="words", pattern="\\W")
     wordsDataFrame = regexTokenizer.transform(business_df)
