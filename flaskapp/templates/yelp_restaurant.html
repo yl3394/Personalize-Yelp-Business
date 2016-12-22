@@ -56,7 +56,7 @@
 
 <section id='analysis' class='wrapper special'>
 
-<h1>Business Activity</h1>
+<h2><strong>Business Activity</strong></h2>
           <h2>Performance Summary</h2>
           <div class="table-wrapper">
             <table class="alt">
@@ -79,11 +79,16 @@
           </div>
 
 
-<br/>
-    <h2>Average review over time</h2>
-    <p>Use the information below to see how your business is trending.
+<div>
+
+  <br/>
+    <h2>Total reviews over time</h2>
+    <p>This represents the health of your business - it should be moving upwards!
       <br/>
-      Movements indicate changes in customer opinion of your business.</p>
+      Flattening out suggests that business is slowing, whereas a steeper slope means that business is booming.</p>
+<h3 id='rating_count_load' font-size="60">Loading</h3>
+<canvas id="rating_count" width="700" height="500"></canvas>
+</div>
 
 
 <div>
@@ -103,24 +108,20 @@
 <canvas id="checkins_hour" width="700" height="500"></canvas>
 </div>
 
-<h1>Business Feedback</h1>
+<h2><strong>Business Feedback</strong></h2>
 
+
+
+
+<br/>
+    <h2>Average review over time</h2>
+    <p>Use the information below to see how your business is trending.
+      <br/>
+      Movements indicate changes in customer opinion of your business.</p>
 <div>
 <h3 id='rating_avg_load'>Loading</h3>
 <canvas id="rating_avg" width="700" height="500"></canvas>
 </div>
-
-<div>
-
-  <br/>
-    <h2>Total reviews over time</h2>
-    <p>This represents the health of your business - it should be moving upwards!
-      <br/>
-      Flattening out suggests that business is slowing, whereas a steeper slope means that business is booming.</p>
-<h3 id='rating_count_load' font-size="60">Loading</h3>
-<canvas id="rating_count" width="700" height="500"></canvas>
-</div>
-
 
 <h2>Wordcloud</h2>
 <h3 id='top_words_load' font-size="60">Loading</h3>
@@ -163,6 +164,7 @@
 
 
 <h2>Review content</h2>
+<p>The wordclouds below will give you a better sense of what customers like and dislike about your business</p>
 <div>
 <p>Words associated with <strong>good</strong> reviews</p>
 <h3 id='good_words_load' font-size="60">Loading</h3>
