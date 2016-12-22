@@ -114,6 +114,13 @@
 <h3 id='top_words_load' font-size="60">Loading</h3>
 <svg id='top_words' width="960" height="500"></svg>
 
+<h2>Wordcloud</h2>
+<div style='display: inline-block;'>
+<h3 id='good_words_load' font-size="60">Loading</h3>
+<svg id='good_words' width="960" height="500"></svg>
+<h3 id='bad_words_load' font-size="60">Loading</h3>
+<svg id='bad_words' width="960" height="500"></svg>
+</div>
 
 <h2>Top "Useful" reviews</h2>
 <div class="table-wrapper">
@@ -837,7 +844,7 @@ $(document).ready(function(){
                           .append("g")
                           // without the transform, words words would get cutoff to the left and top, they would
                           // appear outside of the SVG area
-                          .attr("transform", "translate(320,200)")
+                          .attr("transform", "translate(420,100)")
                           .selectAll("text")
                           .data(words)
                           .enter().append("text")
@@ -854,6 +861,82 @@ $(document).ready(function(){
                }});
 
     
+      $.ajax({
+          type: 'GET',
+          url: '/analysis/bayes/{{business_id}}',
+          dataType: 'json',
+          success: function(result) {
+            
+
+              var g_color = d3.scale.linear()
+                      .domain([0,1,2,3,4,5,6,10,15,20,100])
+                      .range(["#ddd", "#ccc", "#bbb", "#aaa", "#999", "#888", "#777", "#666", "#555", "#444", "#333", "#222"]);
+
+              d3.layout.cloud().size([800, 300])
+                      .words(result['good'])
+                      .rotate(0)
+                      .fontSize(function(d) { return Math.sqrt(d.frequency); })
+                      .on("end", draw_g)
+                      .start();
+
+              function draw_g(words) {
+                  d3.select("#top_words")
+                          .attr("width", 850)
+                          .attr("height", 350)
+                          .attr("class", "wordcloud")
+                          .append("g")
+                          // without the transform, words words would get cutoff to the left and top, they would
+                          // appear outside of the SVG area
+                          .attr("transform", "translate(420,100)")
+                          .selectAll("text")
+                          .data(words)
+                          .enter().append("text")
+                          .style("font-size", function(d) { return d.frequency + "px"; })
+                          .style("fill", function(d, i) { return g_color(i); })
+                          .attr("transform", function(d) {
+                              return "translate(" + [d.x*2, d.y*2] + ")rotate(" + d.rotate + ")";
+                          })
+                          .text(function(d) { return d.word; });
+              }
+
+              var b_color = d3.scale.linear()
+                      .domain([0,1,2,3,4,5,6,10,15,20,100])
+                      .range(["#ddd", "#ccc", "#bbb", "#aaa", "#999", "#888", "#777", "#666", "#555", "#444", "#333", "#222"]);
+
+              d3.layout.cloud().size([800, 300])
+                      .words(result)
+                      .rotate(0)
+                      .fontSize(function(d) { return Math.sqrt(d.frequency); })
+                      .on("end", b_draw)
+                      .start();
+
+              function b_draw(words) {
+                  d3.select("#top_words")
+                          .attr("width", 850)
+                          .attr("height", 350)
+                          .attr("class", "wordcloud")
+                          .append("g")
+                          // without the transform, words words would get cutoff to the left and top, they would
+                          // appear outside of the SVG area
+                          .attr("transform", "translate(420,100)")
+                          .selectAll("text")
+                          .data(words)
+                          .enter().append("text")
+                          .style("font-size", function(d) { return d.frequency + "px"; })
+                          .style("fill", function(d, i) { return b_color(i); })
+                          .attr("transform", function(d) {
+                              return "translate(" + [d.x*2, d.y*2] + ")rotate(" + d.rotate + ")";
+                          })
+                          .text(function(d) { return d.word; });
+              }
+
+
+                d3.select("#good_words_load").remove();
+                d3.select("#bad_words_load").remove();
+
+               }});
+
+
 
           $.ajax({
           type: 'GET',
