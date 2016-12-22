@@ -27,50 +27,48 @@
     </style>
 </head>
 <body>
+    <!-- Banner -->
+    <section id="banner">
+        <h2><strong>Yelp Business Recommendations</strong></h2>
 
-<!-- Banner -->
-<section id="banner">
-    <h2><strong>Yelp Business Recommendations</strong></h2>
+        <p>Search for a business</p>
+        <ul class="actions">
+            <li><input type="text" id="bizInput"
+                       onkeydown="if (event.keyCode == 13)
+                        getBusinessNames(bizInput.value)"
+            />
+                <button type="button" title="click me" onclick="getBusinessNames(bizInput.value)">Search</button>
+            </li>
+            <!--<li><a href="#" class="button special">Get started</a></li>-->
+        </ul>
+    </section>
+    <section id='results' class='wrapper special'>
+        <div id="bizOutput"></div>
+        <div id='favorites'></div>
+        <h4>...Or check out some of our favorites</h4>
+        <p><a href='/business/build_chart/eq6lQI039SBLC6sHm3idGA' target="_blank">SECRET PIZZA</a></p>
+        <p><a href='/business/build_chart/0sNQHGJCb6ckMW3P_J3oXA' target="_blank">FIVE GUYS BURGERS AND FRIES</a></p>
+        <p><a href='/business/build_chart/OqRD-pLL7JNyYvmbcNmaDQ' target="_blank">AH-SO SUSHI & STEAK</a></p>
+        <p><a href='/business/build_chart/-7yF42k0CcJhtPw51oaOqQ' target="_blank">BELLAGIO HOTEL</a></p>
+        <p><a href='/business/build_chart/2e2e7WgqU1BnpxmQL5jbfw' target="_blank">EARL OF SANDWICH</a></p>
+        </div>
+    </section>
 
-    <p>Search for a business</p>
-    <ul class="actions">
-        <li><input type="text" id="bizInput"
-                   onkeydown="if (event.keyCode == 13)
-                    getBusinessNames(bizInput.value)"
-        />
-            <button type="button" title="click me" onclick="getBusinessNames(bizInput.value)">Search</button>
-        </li>
-        <!--<li><a href="#" class="button special">Get started</a></li>-->
-    </ul>
-</section>
-<section id='results' class='wrapper special'>
-    <div id="bizOutput"></div>
-    <div id='favorites'></div>
-    <h4>...Or check out some of our favorites</h4>
-    <p><a href='/business/build_chart/eq6lQI039SBLC6sHm3idGA' target="_blank">SECRET PIZZA</a></p>
-    <p><a href='/business/build_chart/0sNQHGJCb6ckMW3P_J3oXA' target="_blank">FIVE GUYS BURGERS AND FRIES</a></p>
-    <p><a href='/business/build_chart/OqRD-pLL7JNyYvmbcNmaDQ' target="_blank">AH-SO SUSHI & STEAK</a></p>
-    <p><a href='/business/build_chart/-7yF42k0CcJhtPw51oaOqQ' target="_blank">BELLAGIO HOTEL</a></p>
-    <p><a href='/business/build_chart/2e2e7WgqU1BnpxmQL5jbfw' target="_blank">EARL OF SANDWICH</a></p>
-    </div>
-</section>
+    <!-- Footer -->
+    <footer id="footer">
+        <div class="copyright">
+        </div>
+    </footer>
 
-<!-- Footer -->
-<footer id="footer">
-    <div class="copyright">
-    </div>
-</footer>
-
-<!-- Scripts -->
-<script src="assets/js/jquery.min.js"></script>
-<script src="assets/js/skel.min.js"></script>
-<script src="assets/js/util.js"></script>
-<!--[if lte IE 8]>
-<script src="assets/js/ie/respond.min.js"></script><![endif]-->
-<script src="assets/js/main.js"></script>
-<script src="yelp.js"></script>
-<script src="assets/js/jquery.tablesorter.js"></script>
-
+    <!-- Scripts -->
+    <script src="assets/js/jquery.min.js"></script>
+    <script src="assets/js/skel.min.js"></script>
+    <script src="assets/js/util.js"></script>
+    <!--[if lte IE 8]>
+    <script src="assets/js/ie/respond.min.js"></script><![endif]-->
+    <script src="assets/js/main.js"></script>
+    <script src="yelp.js"></script>
+    <script src="assets/js/jquery.tablesorter.js"></script>
 </body>
 
 </html>
