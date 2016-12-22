@@ -168,12 +168,6 @@ def get_top_words(business_id, n, kind='all'):
 
 
 def bayes(business_id):
-    star_mapping = {0: 0.0,
-                1: 0.0,
-                2: 0.0,
-                3: 0.0,
-                4: 1.0,
-                5: 1.0}
 
     spark = yelp_lib.spark
     review = yelp_lib.get_parq('review')
@@ -181,12 +175,19 @@ def bayes(business_id):
 
     regexTokenizer = RegexTokenizer(inputCol="text", outputCol="words", pattern="\\W")
     wordsDataFrame = regexTokenizer.transform(business_df)
+
     remover = StopWordsRemover(inputCol="words", outputCol="filtered")
     cleaned = remover.transform(wordsDataFrame)
     
+    star_mapping = {0: 0.0,
+                1: 0.0,
+                2: 0.0,
+                3: 0.0,
+                4: 1.0,
+                5: 1.0}
+
     cleaned = cleaned.replace(star_mapping, 'stars')
     cleaned = cleaned.withColumn("stars", cleaned["stars"].cast("double"))
-
 
     cv = CountVectorizer(inputCol="filtered", outputCol="features")
     model = cv.fit(cleaned)
@@ -196,11 +197,10 @@ def bayes(business_id):
 
     # create the trainer and set its parameters
     nb = NaiveBayes(smoothing=1.0)
-    # nb = NaiveBayes()
     # train the model
     nb_model = nb.fit(vectorized)
     # compute accuracy on the test set
-    result = nb_model.transform(vectorized)
+    # result = nb_model.transform(vectorized)
 
     thetas = nb_model.theta
 
@@ -213,6 +213,7 @@ def bayes(business_id):
     result_df['t1p'] = np.exp(result_df['theta1'])
 
     result_df['diff'] = result_df['t1p'] / result_df['t0p']
+    
     word_list = result_df.sort_values('diff', ascending=False)['word'].tolist()
     return json.dumps({'good': word_list[:30],
                       'bad': word_list[-30:]})
