@@ -213,9 +213,8 @@ def bayes(business_id):
 
     result_df['diff'] = result_df['t1p'] / result_df['t0p']
     word_list = result_df.sort_values('diff', ascending=False)['word'].tolist()
-    return json.dumps({'good': word_list[:30]
-                      'bad': word_list[-30:]
-                        })
+    return json.dumps({'good': word_list[:30],
+                      'bad': word_list[-30:]})
 
 
 def get_review_overlap(business_id, n):
