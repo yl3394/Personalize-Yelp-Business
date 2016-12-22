@@ -158,7 +158,7 @@
 
 
 
-    <h2>More coming soon!</h2>
+    
     <strong><a href='/static/index.html'>Search for another business</a></strong>
 </section>
 
@@ -841,7 +841,7 @@ $(document).ready(function(){
 
               function draw(words) {
                   d3.select("#top_words")
-                          .attr("width", 850)
+                          .attr("width", 1200)
                           .attr("height", 350)
                           .attr("class", "wordcloud")
                           .append("g")
@@ -885,7 +885,7 @@ $(document).ready(function(){
 
               function draw_g(g_words) {
                   d3.select("#good_words")
-                          .attr("width", 1000)
+                          .attr("width", 1200)
                           .attr("height", 350)
                           .attr("class", "wordcloud")
                           .append("g")
@@ -916,7 +916,7 @@ $(document).ready(function(){
 
               function b_draw(b_words) {
                   d3.select("#bad_words")
-                          .attr("width", 1000)
+                          .attr("width", 1200)
                           .attr("height", 350)
                           .attr("class", "wordcloud")
                           .append("g")
