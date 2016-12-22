@@ -12,10 +12,10 @@
 
 ## Notable Files:
 __(Spark analysis in bolded files)__
-- __/flaskapp/spark_scripts/yelp_lib.py: for the spark connector__
-- __/flaskapp/spark_scripts/analysis.py: Restaurant analysis spark jobs__
+- __/flaskapp/spark_scripts/analysis.py: Restaurant analysis in Spark__
+- __/flaskapp/spark_scripts/yelp_lib.py: Spark connector__
 - /flaskapp/templates/yelp_restaurant.html: Frontend of restaurant analysis page & charting scripts
-- /flaskapp/flaskapp.py: server logic
 - /flaskapp/static/index.html: Frontend of home page
 - /flaskapp/static/yelp.js: Home page search logic
+- /flaskapp/flaskapp.py: Flask server app
 - /lib/chris_restaurant_analysis.ipynb: Local exploratory analysis
