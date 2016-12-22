@@ -896,7 +896,7 @@ $(document).ready(function(){
                           .attr("transform", function(d) {
                               return "translate(" + [d.x*2, d.y*2] + ")rotate(" + d.rotate + ")";
                           })
-                          .text(function(d) { return d.word; });
+                          .text(function(d) { return d; });
               }
 
               var b_color = d3.scale.linear()
@@ -927,7 +927,7 @@ $(document).ready(function(){
                           .attr("transform", function(d) {
                               return "translate(" + [d.x*2, d.y*2] + ")rotate(" + d.rotate + ")";
                           })
-                          .text(function(d) { return d.word; });
+                          .text(function(d) { return d; });
               }
 
 
