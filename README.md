@@ -1,13 +1,14 @@
 # BDA_final_project
 
 ## Project title: Personalize Your Yelp Business
+
 ## Team members
-	+ team member 1 Christopher Halpert
-	+ team member 2 Yanjin Li
-	+ team member 3 Vlad Scherbich
+- team member 1 Christopher Halpert
+- team member 2 Yanjin Li
+- team member 3 Vlad Scherbich
   
 ## Project summary:
-	- This project is a flask app that generates a custom business report based on Yelp data.
+- This project is a flask app that generates a custom business report based on Yelp data.
 
 ## Notable Files:
 __(Spark analysis in bolded files)__
