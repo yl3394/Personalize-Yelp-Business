@@ -56,7 +56,7 @@
 
 <section id='analysis' class='wrapper special'>
 
-
+<h1>Business Activity</h1>
           <h2>Performance Summary</h2>
           <div class="table-wrapper">
             <table class="alt">
@@ -83,7 +83,27 @@
     <h2>Average review over time</h2>
     <p>Use the information below to see how your business is trending.
       <br/>
-      Movements of this metric indicate changes in customer opinion of your business.</p>
+      Movements indicate changes in customer opinion of your business.</p>
+
+
+<div>
+  <br/>
+    <h2>Checkins by day</h2>
+    <p>Use the distribution of checkins to gain a better understanding of when customers are visiting.
+      <br/>
+    Consider expanding capacity during high volume hours, or cutting back when business is slow.</p>
+<h3 id='checkins_day_load' font-size="60">Loading</h3>
+<canvas id="checkins_day" width="700" height="500"></canvas>
+</div>
+
+<div>
+  <br/>
+    <h2>Checkins by hour</h2>
+<h3 id='checkins_hour_load' font-size="60">Loading</h3>
+<canvas id="checkins_hour" width="700" height="500"></canvas>
+</div>
+
+<h1>Business Feedback</h1>
 
 <div>
 <h3 id='rating_avg_load'>Loading</h3>
@@ -94,28 +114,11 @@
 
   <br/>
     <h2>Total reviews over time</h2>
-    <p>This metric represents the health of your business - it should be moving upwards.
+    <p>This represents the health of your business - it should be moving upwards!
       <br/>
-      Flatting out means that business is slowing, whereas a steeper slope means that business is booming.</p>
+      Flattening out suggests that business is slowing, whereas a steeper slope means that business is booming.</p>
 <h3 id='rating_count_load' font-size="60">Loading</h3>
 <canvas id="rating_count" width="700" height="500"></canvas>
-</div>
-
-
-<div>
-  <br/>
-    <h2>Checkins by day</h2>
-    <p> Caption goes here</p>
-<h3 id='checkins_day_load' font-size="60">Loading</h3>
-<canvas id="checkins_day" width="700" height="500"></canvas>
-</div>
-
-<div>
-  <br/>
-    <h2>Checkins by hour</h2>
-    <p> Caption goes here</p>
-<h3 id='checkins_hour_load' font-size="60">Loading</h3>
-<canvas id="checkins_hour" width="700" height="500"></canvas>
 </div>
 
 
@@ -150,20 +153,22 @@
 
 
 <div>
-    <h2>Review Overlap</h2>
-    <p> Caption goes here</p>
+    <h2>Competitor Overlap</h2>
+    <p>Gain a better understanding of your local competitors.
+      <br/>
+      Below shows which other businesses overlap based on good and bad reviews.</p>
 <h3 id='overlap_load' font-size="60">Loading</h3>
 <canvas id="overlap" width="700" height="500"></canvas>
 </div>
 
 
-<h2>Wordcloud</h2>
+<h2>Review content</h2>
 <div>
-<p>Good words</p>
+<p>Words associated with <strong>good</strong> reviews</p>
 <h3 id='good_words_load' font-size="60">Loading</h3>
 <svg id='good_words' width="960" height="500"></svg>
 <h4>Bad Words</h4>
-<p>Caption</p>
+<p>Words associated with <strong>good</strong> reviews</p>
 <h3 id='bad_words_load' font-size="60">Loading</h3>
 <svg id='bad_words' width="960" height="500"></svg>
 </div>
