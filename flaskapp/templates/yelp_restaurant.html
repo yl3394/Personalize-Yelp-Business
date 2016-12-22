@@ -867,18 +867,20 @@ $(document).ready(function(){
           dataType: 'json',
           success: function(result) {
             
-              var color = d3.scale.linear()
+
+
+              var g_color = d3.scale.linear()
                       .domain([0,1,2,3,4,5,6,10,15,20,100])
                       .range(["#ddd", "#ccc", "#bbb", "#aaa", "#999", "#888", "#777", "#666", "#555", "#444", "#333", "#222"]);
 
               d3.layout.cloud().size([800, 300])
-                      .words(result)
+                      .words(result['good'])
                       .rotate(0)
                       .fontSize(function(d) { return Math.sqrt(d.frequency); })
-                      .on("end", draw)
+                      .on("end", draw_g)
                       .start();
 
-              function draw(words) {
+              function draw_g(g_words) {
                   d3.select("#good_words")
                           .attr("width", 850)
                           .attr("height", 350)
@@ -886,52 +888,17 @@ $(document).ready(function(){
                           .append("g")
                           // without the transform, words words would get cutoff to the left and top, they would
                           // appear outside of the SVG area
-                          .attr("transform", "translate(420,200)")
+                          .attr("transform", "translate(420,100)")
                           .selectAll("text")
-                          .data(words)
+                          .data(g_words)
                           .enter().append("text")
                           .style("font-size", function(d) { return d.frequency + "px"; })
-                          .style("fill", function(d, i) { return color(i); })
+                          .style("fill", function(d, i) { return g_color(i); })
                           .attr("transform", function(d) {
                               return "translate(" + [d.x*2, d.y*2] + ")rotate(" + d.rotate + ")";
                           })
                           .text(function(d) { return d.word; });
               }
-
-                d3.select("#good_words_load").remove();
-
-
-
-              // var g_color = d3.scale.linear()
-              //         .domain([0,1,2,3,4,5,6,10,15,20,100])
-              //         .range(["#ddd", "#ccc", "#bbb", "#aaa", "#999", "#888", "#777", "#666", "#555", "#444", "#333", "#222"]);
-
-              // d3.layout.cloud().size([800, 300])
-              //         .words(result['good'])
-              //         .rotate(0)
-              //         .fontSize(function(d) { return Math.sqrt(d.frequency); })
-              //         .on("end", draw_g)
-              //         .start();
-
-              // function draw_g(g_words) {
-              //     d3.select("#good_words")
-              //             .attr("width", 850)
-              //             .attr("height", 350)
-              //             .attr("class", "wordcloud")
-              //             .append("g")
-              //             // without the transform, words words would get cutoff to the left and top, they would
-              //             // appear outside of the SVG area
-              //             .attr("transform", "translate(420,100)")
-              //             .selectAll("text")
-              //             .data(g_words)
-              //             .enter().append("text")
-              //             .style("font-size", function(d) { return d.frequency + "px"; })
-              //             .style("fill", function(d, i) { return g_color(i); })
-              //             .attr("transform", function(d) {
-              //                 return "translate(" + [d.x*2, d.y*2] + ")rotate(" + d.rotate + ")";
-              //             })
-              //             .text(function(d) { return d.word; });
-              // }
 
               // var b_color = d3.scale.linear()
               //         .domain([0,1,2,3,4,5,6,10,15,20,100])
