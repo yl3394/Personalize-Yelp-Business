@@ -25,6 +25,11 @@
             margin-right: auto;
         }
     </style>
+
+    <!--TODO:-->
+    <script src="assets/js/jquery.min.js"></script>
+    <script src="assets/js/jquery.tablesorter.js"></script>
+
 </head>
 <body>
 
@@ -63,7 +68,7 @@
 </footer>
 
 <!-- Scripts -->
-<script src="assets/js/jquery.min.js"></script>
+<!--<script src="assets/js/jquery.min.js"></script>-->
 <script src="assets/js/skel.min.js"></script>
 <script src="assets/js/util.js"></script>
 <!--[if lte IE 8]>
@@ -71,5 +76,19 @@
 <script src="assets/js/main.js"></script>
 <script src="yelp.js"></script>
 
+<!--TODO:-->
+<!--<script src="assets/js/jquery.min.js"></script>-->
+<!--<script src="assets/js/jquery.tablesorter.js"></script>-->
+
 </body>
+
+<!--TODO:-->
+<script>
+    $(document).ready(function () {
+                var tbl = $("#bizOutputTable");
+                tbl.tablesorter();
+            }
+    );
+</script>
+
 </html>
