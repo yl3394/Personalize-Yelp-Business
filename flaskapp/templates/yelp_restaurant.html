@@ -875,11 +875,11 @@ $(document).ready(function(){
               d3.layout.cloud().size([800, 300])
                       .words(result['good'])
                       .rotate(0)
-                      .fontSize(function(d) { return Math.sqrt(d.frequency); })
+                      .fontSize(function(d) { return 15; })
                       .on("end", draw_g)
                       .start();
 
-              function draw_g(words) {
+              function draw_g(g_words) {
                   d3.select("#good_words")
                           .attr("width", 850)
                           .attr("height", 350)
@@ -889,9 +889,9 @@ $(document).ready(function(){
                           // appear outside of the SVG area
                           .attr("transform", "translate(420,100)")
                           .selectAll("text")
-                          .data(words)
+                          .data(g_words)
                           .enter().append("text")
-                          .style("font-size", function(d) { return d.frequency + "px"; })
+                          .style("font-size", function(d) { return 15 + "px"; })
                           .style("fill", function(d, i) { return g_color(i); })
                           .attr("transform", function(d) {
                               return "translate(" + [d.x*2, d.y*2] + ")rotate(" + d.rotate + ")";
@@ -906,11 +906,11 @@ $(document).ready(function(){
               d3.layout.cloud().size([800, 300])
                       .words(result['bad'])
                       .rotate(0)
-                      .fontSize(function(d) { return Math.sqrt(d.frequency); })
+                      .fontSize(function(d) { return 15; })
                       .on("end", b_draw)
                       .start();
 
-              function b_draw(words) {
+              function b_draw(b_words) {
                   d3.select("#bad_words")
                           .attr("width", 850)
                           .attr("height", 350)
@@ -920,9 +920,9 @@ $(document).ready(function(){
                           // appear outside of the SVG area
                           .attr("transform", "translate(420,100)")
                           .selectAll("text")
-                          .data(words)
+                          .data(b_words)
                           .enter().append("text")
-                          .style("font-size", function(d) { return d.frequency + "px"; })
+                          .style("font-size", function(d) { return 15 + "px"; })
                           .style("fill", function(d, i) { return b_color(i); })
                           .attr("transform", function(d) {
                               return "translate(" + [d.x*2, d.y*2] + ")rotate(" + d.rotate + ")";
