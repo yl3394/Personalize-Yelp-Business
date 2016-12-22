@@ -10,7 +10,8 @@
 ## Project summary:
 - This project is a flask app that generates a custom business report based on Yelp data.
 
-## App hosted at: http://ec2-52-201-219-76.compute-1.amazonaws.com/static/index.html (Temporary)
+## App hosted at:
+- http://ec2-52-201-219-76.compute-1.amazonaws.com/static/index.html (Temporary)
 
 ## Notable Files:
 __(Spark analysis in bolded files)__
