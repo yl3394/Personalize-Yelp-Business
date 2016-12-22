@@ -875,7 +875,7 @@ $(document).ready(function(){
               d3.layout.cloud().size([800, 300])
                       .words(result['good'])
                       .rotate(0)
-                      .fontSize(function(d) { return 15; })
+                      .fontSize(function(d) { return Math.sqrt(d.frequency); })
                       .on("end", draw_g)
                       .start();
 
@@ -891,7 +891,7 @@ $(document).ready(function(){
                           .selectAll("text")
                           .data(g_words)
                           .enter().append("text")
-                          .style("font-size", function(d) { return 15 + "px"; })
+                          .style("font-size", function(d) { return d.frequency + "px"; })
                           .style("fill", function(d, i) { return g_color(i); })
                           .attr("transform", function(d) {
                               return "translate(" + [d.x*2, d.y*2] + ")rotate(" + d.rotate + ")";
@@ -906,7 +906,7 @@ $(document).ready(function(){
               d3.layout.cloud().size([800, 300])
                       .words(result['bad'])
                       .rotate(0)
-                      .fontSize(function(d) { return 15; })
+                      .fontSize(function(d) { return Math.sqrt(d.frequency); })
                       .on("end", b_draw)
                       .start();
 
@@ -922,7 +922,7 @@ $(document).ready(function(){
                           .selectAll("text")
                           .data(b_words)
                           .enter().append("text")
-                          .style("font-size", function(d) { return 15 + "px"; })
+                          .style("font-size", function(d) { return d.frequency + "px"; })
                           .style("fill", function(d, i) { return b_color(i); })
                           .attr("transform", function(d) {
                               return "translate(" + [d.x*2, d.y*2] + ")rotate(" + d.rotate + ")";
