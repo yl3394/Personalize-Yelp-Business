@@ -844,7 +844,7 @@ $(document).ready(function(){
                           .append("g")
                           // without the transform, words words would get cutoff to the left and top, they would
                           // appear outside of the SVG area
-                          .attr("transform", "translate(420,100)")
+                          .attr("transform", "translate(420,200)")
                           .selectAll("text")
                           .data(words)
                           .enter().append("text")
@@ -904,7 +904,7 @@ $(document).ready(function(){
                       .range(["#ddd", "#ccc", "#bbb", "#aaa", "#999", "#888", "#777", "#666", "#555", "#444", "#333", "#222"]);
 
               d3.layout.cloud().size([800, 300])
-                      .words(result)
+                      .words(result['bad'])
                       .rotate(0)
                       .fontSize(function(d) { return Math.sqrt(d.frequency); })
                       .on("end", b_draw)
