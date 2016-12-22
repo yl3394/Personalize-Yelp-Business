@@ -12,11 +12,10 @@ function getBusinessNames(name) {
         if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
             createTable("bizOutput", xmlHttp.responseText);
 
-            // sort the table
-            $("#bizOutputTable").tablesorter();
-            // col_index, order
-            var sorting = [[0,0]];
-            $("#bizOutputTable").trigger("sorton",[sorting]);
+            // sort the table ASC by (name, city, state)
+            $("#bizOutputTable").tablesorter({
+                sortList: [[0,0], [1,0], [2,0]]
+            });
         }
     }
     xmlHttp.open("GET", theUrl, true); // true for asynchronous 
