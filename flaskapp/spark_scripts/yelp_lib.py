@@ -30,7 +30,7 @@ def get_business_names(name):
         'name', 'business_id', 'city', 'state', 'stars', 'review_count', 'categories'
     ).where(
         'LOWER(name) like "%{}%"'.format(name.lower())
-    ).orderBy('name')
+    )
     coll = sel.collect()
 
     # names may contain non-ASCII chars - encode
@@ -42,7 +42,7 @@ def get_business_names(name):
             r.state.encode('utf8'),
             r.stars,
             r.review_count,
-            ''.join('"{}" '.format(c) for c in r.categories if c != 'Restaurants')
+            ''.join('"{}" '.format(c) for c in r.categories)
         ) for r in coll
     )
     # remove trailing separator
