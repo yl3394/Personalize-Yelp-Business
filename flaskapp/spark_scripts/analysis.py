@@ -9,6 +9,7 @@ from pyspark.ml.feature import CountVectorizer
 from pyspark.ml.classification import NaiveBayes
 from pyspark.sql.functions import col
 from pyspark.sql.types import DoubleType
+import numpy as np
 
 YELP_DATA_DIR = '/home/hadoop/yelp_data/'
 
