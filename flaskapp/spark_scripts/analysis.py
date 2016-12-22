@@ -6,6 +6,10 @@ from pyspark.sql.functions import explode
 from pyspark.ml.feature import Tokenizer, RegexTokenizer
 from pyspark.ml.feature import StopWordsRemover
 from pyspark.ml.feature import CountVectorizer
+from pyspark.ml.classification import NaiveBayes
+from pyspark.sql.functions import col
+from pyspark.sql.types import DoubleType
+import numpy as np
 
 YELP_DATA_DIR = '/home/hadoop/yelp_data/'
 
@@ -29,6 +33,9 @@ def review_count_by_date(df):
 
 
 def get_review_count_by_date(business_id):
+    """
+    Returns a cumulative count of reviews by date.
+    """
     spark = yelp_lib.spark
     review = yelp_lib.get_parq('review')
     review.registerTempTable("review")
@@ -60,6 +67,9 @@ def review_avg_by_date(df):
 
 
 def get_review_avg_by_date(business_id):
+    """
+    Returns a smoothed review average grouped by date.
+    """
     spark = yelp_lib.spark
     review = yelp_lib.get_parq('review')
     review.registerTempTable("review")
@@ -71,6 +81,10 @@ def get_review_avg_by_date(business_id):
 
 
 def get_business_info(business_id):
+    """
+    Returns fields from the business table along 
+    with total checkins for the given business.
+    """
     spark = yelp_lib.spark
     business = yelp_lib.get_parq('business')
     business.registerTempTable("business")
@@ -89,6 +103,9 @@ def get_business_info(business_id):
     return df
 
 def get_checkins(business_id):
+    """
+    Returns the distribution of checkins by day and hour
+    """
     checkin_file = '{}yelp_academic_dataset_checkin.json'.format(YELP_DATA_DIR)
     checkin_df = pd.read_json(checkin_file, orient='records', lines=True)
     info = checkin_df.loc[lambda x: x['business_id'] == business_id, 'checkin_info']
@@ -127,11 +144,11 @@ def get_checkins(business_id):
                         })
 
 
-
-
-
-
 def get_reviews(business_id, n):
+    """
+    Returns a sample of top n reviews sorted by 'usefulness'
+    for the given business.
+    """
     spark = yelp_lib.spark
     review = yelp_lib.get_parq('review')
     business_df = review.filter(review['business_id'] == business_id).toPandas()
@@ -140,6 +157,15 @@ def get_reviews(business_id, n):
     return business_df.head(n).to_dict(orient='records')
 
 def get_top_words(business_id, n, kind='all'):
+    """
+    Returns the most frequent tokens and their associated frequencies.
+    Performes tokenization and removal of stopwords.
+    Normalized frequencies for use in word clouds.
+
+    Input:
+    - kind: ['all', 'good', 'bad']
+        Generate output for all reviews, or only good or bad.
+    """
     spark = yelp_lib.spark
     review = yelp_lib.get_parq('review')
     business_df = review.filter(review['business_id'] == business_id)
@@ -167,22 +193,74 @@ def get_top_words(business_id, n, kind='all'):
     return word_count_df.head(n).to_json(orient='records')
 
 
-def tfidf(business_id):
-    sentenceData = spark.createDataFrame([
-    (1, "Hi I heard about Spark"),
-    (2, "I wish Java could use case classes"),
-    (3, "Logistic regression models are neat")
-], ["id", "sentence"])
+def bayes(business_id):
+    """
+    Generates naive bayes model of rating based on tokens from the review text.
+    Model generates "thetas" that correspond to P('good' or 'bad' | presence of token)
+    Returns tokens that correspond to 'good' and 'bad' reviews based on the difference in probabilities.
+    Normalizes for use in word clouds.
+    """
+    spark = yelp_lib.spark
+    review = yelp_lib.get_parq('review')
+    business_df = review.filter(review['business_id'] == business_id)
 
+    regexTokenizer = RegexTokenizer(inputCol="text", outputCol="words", pattern="\\W")
+    wordsDataFrame = regexTokenizer.transform(business_df)
 
-    tokenizer = Tokenizer(inputCol="sentence", outputCol="words")
-    df_wordData = tokenizer.transform(sentenceData)
-    cv = CountVectorizer(inputCol="words", outputCol="features")
-    model = cv.fit(df_word)
-    model.transform(df_word)
+    remover = StopWordsRemover(inputCol="words", outputCol="filtered")
+    cleaned = remover.transform(wordsDataFrame)
+    
+    star_mapping = {0: 0.0,
+                1: 0.0,
+                2: 0.0,
+                3: 0.0,
+                4: 1.0,
+                5: 1.0}
+
+    cleaned = cleaned.replace(star_mapping, 'stars')
+    cleaned = cleaned.withColumn("stars", cleaned["stars"].cast("double"))
+
+    cv = CountVectorizer(inputCol="filtered", outputCol="features")
+    model = cv.fit(cleaned)
+    vectorized = model.transform(cleaned)
+
+    vectorized = vectorized.select(col('stars').alias('label'), col('features'))
+
+    # create the trainer and set its parameters
+    nb = NaiveBayes(smoothing=1.0)
+    # train the model
+    nb_model = nb.fit(vectorized)
+    # compute accuracy on the test set
+    # result = nb_model.transform(vectorized)
+
+    thetas = nb_model.theta
+
+    thetas = thetas.toArray()
+    result_df = pd.DataFrame({'word': model.vocabulary,
+                  'theta0': thetas[0],
+                  'theta1': thetas[1]})
+
+    result_df['t0p'] = np.exp(result_df['theta0'])
+    result_df['t1p'] = np.exp(result_df['theta1'])
+
+    result_df['diff'] = result_df['t1p'] / result_df['t0p']
+
+    word_list = result_df.sort_values('diff', ascending=False)[['word', 'diff']]
+    word_list.columns = ['word', 'frequency']
+    good = word_list.head(30)
+    good['frequency'] = word_list['frequency'] / word_list['frequency'].max() * 60.
+    
+    bad = word_list.tail(30)
+    bad['frequency'] = 1.0 / bad['frequency']
+    bad['frequency'] = bad['frequency'] / bad['frequency'].max() * 60.
+    return json.dumps({'good': good.to_dict(orient='records'),
+                      'bad': bad.to_dict(orient='records')})
 
 
 def get_review_overlap(business_id, n):
+    """
+    Returns a list of the top N businesses that most overlap with the given restaurant.
+    """
     spark = yelp_lib.spark
     review = yelp_lib.get_parq('review')
     business = yelp_lib.get_parq('business')
@@ -202,36 +280,3 @@ def get_review_overlap(business_id, n):
                         'good_reviews': review_overlap['good_reviews'].tolist(),
                         'bad_reviews': review_overlap['bad_reviews'].tolist()})
 
-# def get_top_words(business_id, n):
-#     word_freq = pd.read_json('{}wordfreq_bybusinessid_bigram.json'.format(YELP_DATA_DIR), orient='records')
-#     words = word_freq[word_freq['business_id'] == business_id].drop('business_id', axis=1).T
-#     words.columns = ['word_freq']
-#     words = words.sort_values('word_freq', ascending=False) 
-#     words = words.reset_index()
-#     words.columns = ['word','frequency']
-#     return words.head(n).to_json(orient='records')
-
-def main(business_id):
-    df = spark.sql(
-        """select * from review where business_id = '{business_id}'""".format(business_id=business_id)).toPandas()
-
-    review_count = review_count_by_date(df)
-    review_count.to_csv('./review_count.tsv', sep='\t', header=True, index=False)
-
-    review_avg = review_avg_by_date(df)
-    review_avg.to_csv('./review_avg.tsv', sep='\t', header=True, index=False)
-
-    review_overlap = spark.sql("""
-        select b.name, count(1) review, SUM(if(r1.stars >= 4,1,0)) as good_reviews, SUM(if(r1.stars <= 2,1,0)) as bad_reviews
-        from review r1
-        join review r2 on r1.user_id = r2.user_id and r1.business_id != r2.business_id
-        join business b on b.business_id = r2.business_id
-        where r1.business_id = '{business_id}'
-        group by b.name
-    """.format(business_id=business_id)).toPandas()
-
-    review_overlap.to_csv('./review_count.csv', index=False, header=True)
-
-
-if __name__ == '__main__':
-    main(sys.argv[1])

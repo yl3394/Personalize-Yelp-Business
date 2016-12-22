@@ -30,11 +30,16 @@ def build_chart(business_id):
 
     reviews = analysis.get_reviews(business_id, n=5)
 
+    city = business_info.city.values[0]
+    state = business_info.state.values[0]
+
     return render_template('yelp_restaurant.html', business_id=business_id, business_name=business_name,
     	avg_stars = avg_stars,
     	review_count = review_count,
     	checkins=checkins,
-        reviews=reviews
+        reviews=reviews,
+        city=city,
+        state=state
     )
 
 
@@ -71,6 +76,10 @@ def analysis_reviews(business_id):
 @app.route('/analysis/overlap/<business_id>')
 def analysis_overlap(business_id):
     return analysis.get_review_overlap(business_id, n=15)
+    
+@app.route('/analysis/bayes/<business_id>')
+def analysis_bayes(business_id):
+    return analysis.bayes(business_id)
     
 
 if __name__ == '__main__':
