@@ -6,6 +6,9 @@ from pyspark.sql.functions import explode
 from pyspark.ml.feature import Tokenizer, RegexTokenizer
 from pyspark.ml.feature import StopWordsRemover
 from pyspark.ml.feature import CountVectorizer
+from pyspark.ml.classification import NaiveBayes
+from pyspark.sql.functions import col
+from pyspark.sql.types import DoubleType
 
 YELP_DATA_DIR = '/home/hadoop/yelp_data/'
 
@@ -127,10 +130,6 @@ def get_checkins(business_id):
                         })
 
 
-
-
-
-
 def get_reviews(business_id, n):
     spark = yelp_lib.spark
     review = yelp_lib.get_parq('review')
@@ -167,19 +166,56 @@ def get_top_words(business_id, n, kind='all'):
     return word_count_df.head(n).to_json(orient='records')
 
 
-def tfidf(business_id):
-    sentenceData = spark.createDataFrame([
-    (1, "Hi I heard about Spark"),
-    (2, "I wish Java could use case classes"),
-    (3, "Logistic regression models are neat")
-], ["id", "sentence"])
+def bayes(business_id):
+    star_mapping = {0: 0.0,
+                1: 0.0,
+                2: 0.0,
+                3: 0.0,
+                4: 1.0,
+                5: 1.0}
+
+    spark = yelp_lib.spark
+    review = yelp_lib.get_parq('review')
+    business_df = review.filter(review['business_id'] == business_id)
+
+    regexTokenizer = RegexTokenizer(inputCol="text", outputCol="words", pattern="\\W")
+    wordsDataFrame = regexTokenizer.transform(business_df)
+    remover = StopWordsRemover(inputCol="words", outputCol="filtered")
+    cleaned = remover.transform(wordsDataFrame)
+    
+    cleaned = cleaned.replace(star_mapping, 'stars')
+    cleaned = cleaned.withColumn("stars", cleaned["stars"].cast("double"))
 
 
-    tokenizer = Tokenizer(inputCol="sentence", outputCol="words")
-    df_wordData = tokenizer.transform(sentenceData)
-    cv = CountVectorizer(inputCol="words", outputCol="features")
-    model = cv.fit(df_word)
-    model.transform(df_word)
+    cv = CountVectorizer(inputCol="filtered", outputCol="features")
+    model = cv.fit(cleaned)
+    vectorized = model.transform(cleaned)
+
+    vectorized = vectorized.select(col('stars').alias('label'), col('features'))
+
+    # create the trainer and set its parameters
+    nb = NaiveBayes(smoothing=1.0)
+    # nb = NaiveBayes()
+    # train the model
+    nb_model = nb.fit(vectorized)
+    # compute accuracy on the test set
+    result = nb_model.transform(vectorized)
+
+    thetas = nb_model.theta
+
+    thetas = thetas.toArray()
+    result_df = pd.DataFrame({'word': model.vocabulary,
+                  'theta0': thetas[0],
+                  'theta1': thetas[1]})
+
+    result_df['t0p'] = np.exp(result_df['theta0'])
+    result_df['t1p'] = np.exp(result_df['theta1'])
+
+    result_df['diff'] = result_df['t1p'] / result_df['t0p']
+    word_list = result_df.sort_values('diff', ascending=False)['word'].tolist()
+    return json.dumps({'good': word_list[:30]
+                      'bad': word_list[-30:]
+                        })
 
 
 def get_review_overlap(business_id, n):

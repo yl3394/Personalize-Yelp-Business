@@ -72,6 +72,10 @@ def analysis_reviews(business_id):
 def analysis_overlap(business_id):
     return analysis.get_review_overlap(business_id, n=15)
     
+@app.route('/analysis/bayes/<business_id>')
+def analysis_bayes(business_id):
+    return analysis.bayes(business_id)
+    
 
 if __name__ == '__main__':
     app.run()
