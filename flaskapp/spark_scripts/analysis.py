@@ -215,7 +215,8 @@ def bayes(business_id):
     result_df['diff'] = result_df['t1p'] / result_df['t0p']
 
     word_list = result_df.sort_values('diff', ascending=False)[['word', 'diff']]
-    word_list['diff'] = (word_list['diff'].abs() * 2)
+    word_list['diff'] = (word_list['diff'].abs())
+    word_list['diff'] = word_list['diff'] / word_list['diff'].max() * 60
     word_list.columns = ['word', 'frequency']
     return json.dumps({'good': word_list.head(30).to_dict(orient='records'),
                       'bad': word_list.tail(30).to_dict(orient='records')})
