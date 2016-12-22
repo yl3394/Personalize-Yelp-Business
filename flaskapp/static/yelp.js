@@ -12,9 +12,11 @@ function getBusinessNames(name) {
         if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
             createTable("bizOutput", xmlHttp.responseText);
 
-            // todo:
-            var tbl = $("#bizOutputTable");
-            tbl.tablesorter();
+            // sort the table
+            $("#bizOutputTable").tablesorter();
+            // col_index, order
+            var sorting = [[0,0]];
+            $("#bizOutputTable").trigger("sorton",[sorting]);
         }
     }
     xmlHttp.open("GET", theUrl, true); // true for asynchronous 
@@ -32,6 +34,13 @@ function createCol(tr, title) {
     td.innerHTML = title;
 }
 
+function createHeaderCol(tr, title) {
+    var th = document.createElement('th');
+    th.style.border = '1px solid black';
+    th.innerHTML = title;
+    tr.appendChild(th);
+}
+
 function createTable(elemId, response) {
     elem = document.getElementById(elemId);
 
@@ -47,62 +56,29 @@ function createTable(elemId, response) {
 
     var tbl = document.createElement('table');
     tbl.setAttribute("id", "bizOutputTable");
-
-    // todo:
     tbl.setAttribute("class", "tablesorter");
 
     tbl.style.width = '100px';
     tbl.style.border = '1px solid black';
 
-    // create headers
+    // create THEAD
     var tblHeader = document.createElement("thead");
     tbl.appendChild(tblHeader);
 
-    // var tr = tbl.insertRow();
+    // create header columns
     var tr = tblHeader.insertRow();
+    createHeaderCol(tr, "Name");
+    createHeaderCol(tr, "City");
+    createHeaderCol(tr, "State");
+    createHeaderCol(tr, "Avg. Rating");
+    createHeaderCol(tr, "Num. Reviews");
+    createHeaderCol(tr, "Categories");
 
-    // createCol(tr, 'Name');
-    // createCol(tr, 'City');
-    // createCol(tr, 'State');
-    // createCol(tr, 'Avg. Rating');
-    // createCol(tr, 'Num. Reviews');
-    // createCol(tr, 'Categories');
-
-
-    // // Name
-    th = document.createElement('th');
-    th.innerHTML = "Name";
-    tr.appendChild(th);
-
-    // City
-    th = document.createElement('th');
-    th.innerHTML = "City";
-    tr.appendChild(th);
-
-    // State
-    th = document.createElement('th');
-    th.innerHTML = "State";
-    tr.appendChild(th);
-
-    // Avg. Rating
-    th = document.createElement('th');
-    th.innerHTML = "Avg. Rating";
-    tr.appendChild(th);
-
-    // Num. Reviews
-    th = document.createElement('th');
-    th.innerHTML = "Num. Reviews";
-    tr.appendChild(th);
-
-    // Categories
-    th = document.createElement('th');
-    th.innerHTML = "Categories";
-    tr.appendChild(th);
-
+    // create TBODY
     var tblBody = document.createElement("tbody");
     tbl.appendChild(tblBody);
 
-    for (var i = 1; i < arr.length; ++i) {
+    for (var i = 0; i < arr.length; ++i) {
         tmp = arr[i].split(';');
         bizName = tmp[0];
         bizID = tmp[1];
