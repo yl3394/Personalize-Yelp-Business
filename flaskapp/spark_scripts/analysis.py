@@ -324,4 +324,4 @@ def bayes_cv(business_id):
 
     predictionAndLabels = result.select("prediction", "label")
     evaluator = MulticlassClassificationEvaluator(metricName="accuracy")
-    print("Accuracy: " + str(evaluator.evaluate(predictionAndLabels)))
+    return "Accuracy: " + str(evaluator.evaluate(predictionAndLabels))
