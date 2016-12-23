@@ -81,6 +81,9 @@ def analysis_overlap(business_id):
 def analysis_bayes(business_id):
     return analysis.bayes(business_id)
     
+@app.route('/analysis/bayes_cv/<business_id>')
+def analysis_bayes_cv(business_id):
+    return analysis.bayes_cv(business_id)
 
 if __name__ == '__main__':
     app.run()
